@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BERKLEY WIDE VIEW</title>
+    <title>BERKLEY WIDE VIEW: FINAL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jura:wght@300;500;700&display=swap');
@@ -25,7 +24,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            background: radial-gradient(circle at 50% 50%, #1a1a20 0%, #000000 100%);
         }
 
         /* --- TOP NAVIGATION (Horizontal, Minimal) --- */
@@ -34,83 +33,86 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 50px;
+            height: 60px;
             z-index: 20;
             background: rgba(0, 0, 0, 0.8);
             border-bottom: 1px solid #333;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
             overflow-x: auto;
             white-space: nowrap;
+            padding: 0 20px;
             backdrop-filter: blur(5px);
         }
 
         .nav-btn {
             background: transparent;
             border: none;
-            color: #666;
+            color: #888;
             font-family: 'Jura', sans-serif;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            padding: 10px 15px;
+            padding: 12px 15px;
             cursor: pointer;
             transition: all 0.2s;
             border-bottom: 2px solid transparent;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .nav-btn:hover {
             color: #fff;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .nav-btn.active {
             color: #ffd700;
             border-bottom: 2px solid #ffd700;
+            background: linear-gradient(to top, rgba(255, 215, 0, 0.1), transparent);
         }
 
         /* --- BOTTOM INFO (Minimal Overlay) --- */
         #bottom-info {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 15px;
-            backdrop-filter: blur(5px);
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid #00f3ff; /* Neon Blue Border */
+            border-radius: 6px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
             pointer-events: none; /* Click through allowed */
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        #bottom-info.visible {
-            opacity: 1;
+            transition: opacity 0.3s;
         }
 
         .info-title {
             color: #ffd700;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 5px;
+            display: inline-block;
         }
 
         .info-desc {
-            color: #ccc;
-            font-size: 12px;
-            line-height: 1.4;
+            color: #ddd;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
-        /* --- SCROLLBAR HIDE --- */
-        #top-nav::-webkit-scrollbar { height: 2px; }
-        #top-nav::-webkit-scrollbar-thumb { background: #444; }
+        /* Scrollbar Hide */
+        #top-nav::-webkit-scrollbar { height: 4px; }
+        #top-nav::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
     </style>
 </head>
 <body>
@@ -124,246 +126,293 @@
 
     <!-- Bottom Info Overlay -->
     <div id="bottom-info">
-        <div class="info-title" id="info-title">MODULE NAME</div>
-        <div class="info-desc" id="info-desc">Description text...</div>
+        <div class="info-title" id="info-title">SYSTEM READY</div>
+        <div class="info-desc" id="info-desc">Initializing digital twin...</div>
     </div>
 
     <script>
-        // --- DATA DEFINITION ---
+        // --- MODULE DATA (10 Items) ---
         const modules = {
-            'all': { title: 'FULL ASSEMBLY', desc: '2,877개 부품의 전체 결합 상태. 마우스로 드래그하여 회전, 휠로 줌인/아웃 하세요.', y: 0 },
-            'core': { title: 'CORE CHASSIS', desc: 'Caliber 3752의 베이스 플레이트. 양면 다이얼 구동을 위한 리버싱 기어 시스템.', y: 0 },
-            'chinese': { title: 'CHINESE CALENDAR', desc: '불규칙한 음력 윤달/설날을 계산하는 비정형 캠(Cam) 알고리즘.', y: 8 },
-            'tourbillon': { title: '3-AXIS TOURBILLON', desc: '중력 오차를 상쇄하는 3축 회전 구체형 투르비용.', y: 16 },
-            'sky': { title: 'CELESTIAL CHART', desc: '사용자 위치 기반의 실시간 밤하늘 성도(Star Chart).', y: 24 },
-            'chime': { title: 'WESTMINSTER CHIME', desc: '5개의 공과 해머로 연주하는 시각 알림(Sonnerie).', y: -8 },
-            'retro': { title: 'RETROGRADE DATE', desc: '순식간에 원점으로 복귀하는 날짜 표시 메커니즘.', y: -16 },
-            'split': { title: 'SPLIT-CHRONO', desc: '두 개의 시간을 동시에 계측하는 스플릿 세컨드 시스템.', y: -24 },
-            'eq': { title: 'EQUATION OF TIME', desc: '태양시와 평균시의 차이를 보여주는 콩팥 모양(Kidney) 캠.', y: 32 },
-            'moon': { title: 'PRECISION MOON', desc: '1027년에 하루 오차를 갖는 초정밀 문페이즈 구체.', y: 40 }
+            'all': { title: 'FULL ASSEMBLY (전체 조립)', desc: '2,877개 부품의 전체 결합 상태입니다. 세계에서 가장 복잡한 시계의 위용을 확인하십시오. (마우스: 회전/줌)', y: 0, dist: 60 },
+            'core': { title: 'CORE CHASSIS (기반)', desc: 'Caliber 3752의 메인 플레이트입니다. 양면 다이얼 구동을 위해 샌드위치 구조가 아닌 동축 리버싱 기어 시스템을 채택했습니다.', y: 0, dist: 30 },
+            'chinese': { title: 'CHINESE CALENDAR (음력)', desc: '가장 구현하기 어려운 불규칙한 태음태양력입니다. 메톤 주기(19년)의 데이터를 물리적인 캠(Cam)의 굴곡으로 변환했습니다.', y: 8, dist: 25 },
+            'tourbillon': { title: '3-AXIS TOURBILLON (투르비용)', desc: '중력에 의한 오차를 모든 방향에서 상쇄하는 3축 회전 구체형 투르비용입니다. 말테 크로스 형상을 띱니다.', y: 16, dist: 20 },
+            'sky': { title: 'CELESTIAL CHART (성도)', desc: '사용자의 위치(상하이/제네바)에서 바라본 밤하늘의 별자리를 실시간으로 묘사합니다. 항성시(23시간 56분 4초)로 회전합니다.', y: 24, dist: 35 },
+            'chime': { title: 'WESTMINSTER CHIME (차임)', desc: '빅벤의 멜로디를 연주하는 5개의 공(Gong)과 5개의 해머입니다. 그랑 소너리 모드 시 매 시각 소리를 냅니다.', y: -8, dist: 25 },
+            'retro': { title: 'RETROGRADE DATE (레트로그레이드)', desc: '날짜 바늘이 끝에 도달하면 스프링의 힘으로 순식간에 1일로 되돌아오는 랙(Rack) 시스템입니다.', y: -16, dist: 25 },
+            'split': { title: 'SPLIT-CHRONO (스플릿 세컨드)', desc: '두 개의 시간을 동시에 측정하기 위해 두 개의 초침 휠을 분리하고 다시 합치는 고난도 클러치 메커니즘입니다.', y: -24, dist: 25 },
+            'eq': { title: 'EQUATION OF TIME (균시차)', desc: '실제 태양시와 평균 태양시의 오차(-16분 ~ +14분)를 보여주는 콩팥(Kidney) 모양의 캠입니다.', y: 32, dist: 20 },
+            'moon': { title: 'PRECISION MOON (문페이즈)', desc: '1027년 동안 단 하루의 오차만 발생하는 초정밀 구체형 문페이즈입니다. 달 표면의 질감을 재현했습니다.', y: 40, dist: 20 }
         };
 
         // --- THREE.JS SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.015);
+        scene.fog = new THREE.FogExp2(0x000000, 0.01); // Deep depth fog
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(60, 20, 60);
-
+        
+        // Target variables for smooth animation (Manual Lerp)
+        let targetCamPos = new THREE.Vector3(60, 20, 60);
+        let targetLookAt = new THREE.Vector3(0, 0, 0);
+        
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
         container.appendChild(renderer.domElement);
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+        // Lighting (Critical for visibility)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffd700, 1.2);
-        dirLight.position.set(50, 50, 50);
-        scene.add(dirLight);
-        const blueLight = new THREE.PointLight(0x00ffff, 0.8, 100);
-        blueLight.position.set(-30, 0, -30);
-        scene.add(blueLight);
+        
+        const keyLight = new THREE.DirectionalLight(0xffd700, 1.5); // Gold Light
+        keyLight.position.set(50, 50, 50);
+        scene.add(keyLight);
+        
+        const rimLight = new THREE.DirectionalLight(0x00f3ff, 1.0); // Cyan Rim Light
+        rimLight.position.set(-30, 0, -30);
+        scene.add(rimLight);
 
-        // --- PROCEDURAL OBJECTS ---
-        const matGold = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 });
-        const matSteel = new THREE.MeshStandardMaterial({ color: 0xaaccff, metalness: 0.9, roughness: 0.2 });
-        const matWire = new THREE.LineBasicMaterial({ color: 0x444444, transparent: true, opacity: 0.3 });
-
+        // --- PROCEDURAL OBJECT GENERATION ---
         const masterGroup = new THREE.Group();
         scene.add(masterGroup);
 
-        // Helper: Gear
-        function makeGear(r, teeth, color) {
-            const g = new THREE.Group();
-            const geo = new THREE.CylinderGeometry(r, r, 0.5, teeth * 2);
-            const mesh = new THREE.Mesh(geo, color);
-            g.add(mesh);
-            // Wireframe for tech look
-            const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), matWire);
-            g.add(edges);
-            return g;
-        }
+        // Materials
+        const matGold = new THREE.MeshStandardMaterial({ 
+            color: 0xffd700, metalness: 0.8, roughness: 0.2, 
+            emissive: 0x332200, emissiveIntensity: 0.2 
+        });
+        const matSteel = new THREE.MeshStandardMaterial({ 
+            color: 0xaaccff, metalness: 0.9, roughness: 0.3 
+        });
+        const matWire = new THREE.LineBasicMaterial({ 
+            color: 0x444444, transparent: true, opacity: 0.2 
+        });
+        const matBlueWire = new THREE.MeshBasicMaterial({
+            color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.3
+        });
 
         const objects = {};
 
+        // Helper Function: Create Gear
+        function createGear(radius, teeth, material, yPos) {
+            const group = new THREE.Group();
+            const geometry = new THREE.CylinderGeometry(radius, radius, 0.5, teeth * 2);
+            const mesh = new THREE.Mesh(geometry, material);
+            group.add(mesh);
+            
+            // Add tech ring
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.6, 0.1, 16, 32), matBlueWire);
+            ring.rotation.x = Math.PI / 2;
+            group.add(ring);
+            
+            group.position.y = yPos;
+            return group;
+        }
+
         // 1. CORE
-        objects['core'] = makeGear(12, 32, matSteel);
-        objects['core'].position.y = modules['core'].y;
+        objects['core'] = createGear(12, 40, matSteel, modules['core'].y);
         masterGroup.add(objects['core']);
 
-        // 2. CHINESE (Irregular Cam)
+        // 2. CHINESE (Cam)
         const camShape = new THREE.Shape();
-        for(let i=0; i<60; i++) {
-            let a = (i/60)*Math.PI*2;
-            let rad = 6 + Math.sin(a*3) + Math.cos(a*5);
-            camShape.lineTo(Math.cos(a)*rad, Math.sin(a)*rad);
+        for(let i=0; i<=100; i++) {
+            const t = (i/100) * Math.PI * 2;
+            const r = 6 + Math.sin(t*3) + Math.cos(t*5)*0.5; // Irregular shape
+            camShape.lineTo(Math.cos(t)*r, Math.sin(t)*r);
         }
-        objects['chinese'] = new THREE.Mesh(new THREE.ExtrudeGeometry(camShape, {depth:1, bevelEnabled:false}), matGold);
+        const camGeo = new THREE.ExtrudeGeometry(camShape, {depth: 1, bevelEnabled: false});
+        objects['chinese'] = new THREE.Mesh(camGeo, matGold);
         objects['chinese'].rotation.x = Math.PI/2;
         objects['chinese'].position.y = modules['chinese'].y;
         masterGroup.add(objects['chinese']);
 
-        // 3. TOURBILLON (Spheres)
+        // 3. TOURBILLON (Sphere Cage)
         const tGroup = new THREE.Group();
-        tGroup.add(new THREE.Mesh(new THREE.SphereGeometry(4, 16, 16), new THREE.MeshBasicMaterial({color:0xffd700, wireframe:true})));
-        tGroup.add(new THREE.Mesh(new THREE.SphereGeometry(2.5, 16, 16), new THREE.MeshBasicMaterial({color:0x00ffff, wireframe:true})));
+        tGroup.position.y = modules['tourbillon'].y;
+        const outerCage = new THREE.Mesh(new THREE.SphereGeometry(4, 16, 16), matGold); // Solid for visibility
+        outerCage.material = new THREE.MeshStandardMaterial({color:0xffd700, wireframe:true});
+        const innerCage = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), matBlueWire);
+        tGroup.add(outerCage, innerCage);
         objects['tourbillon'] = tGroup;
-        objects['tourbillon'].position.y = modules['tourbillon'].y;
         masterGroup.add(tGroup);
 
-        // 4. SKY (Points)
+        // 4. SKY (Particles)
         const starGeo = new THREE.BufferGeometry();
         const stars = [];
-        for(let i=0; i<500; i++) stars.push((Math.random()-0.5)*30, (Math.random()-0.5)*2, (Math.random()-0.5)*30);
+        for(let i=0; i<1000; i++) {
+            stars.push((Math.random()-0.5)*40, (Math.random()-0.5)*5, (Math.random()-0.5)*40);
+        }
         starGeo.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
-        objects['sky'] = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xffffff, size:0.2}));
+        objects['sky'] = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0x00f3ff, size:0.2}));
         objects['sky'].position.y = modules['sky'].y;
         masterGroup.add(objects['sky']);
 
-        // 5. CHIME (Torus)
+        // 5. CHIME (Gongs)
         const cGroup = new THREE.Group();
+        cGroup.position.y = modules['chime'].y;
         for(let i=0; i<3; i++) {
-            let ring = new THREE.Mesh(new THREE.TorusGeometry(8+i*2, 0.2, 8, 50), matSteel);
-            ring.rotation.x = Math.PI/2;
-            cGroup.add(ring);
+            const gong = new THREE.Mesh(new THREE.TorusGeometry(8 + i*2, 0.2, 8, 64), matSteel);
+            gong.rotation.x = Math.PI/2;
+            cGroup.add(gong);
         }
         objects['chime'] = cGroup;
-        objects['chime'].position.y = modules['chime'].y;
         masterGroup.add(cGroup);
 
         // 6. RETRO (Arc)
-        objects['retro'] = new THREE.Mesh(new THREE.TorusGeometry(8, 0.5, 8, 50, Math.PI), matGold);
+        objects['retro'] = new THREE.Mesh(new THREE.TorusGeometry(8, 0.5, 8, 64, Math.PI), matGold);
         objects['retro'].rotation.x = Math.PI/2;
         objects['retro'].position.y = modules['retro'].y;
         masterGroup.add(objects['retro']);
 
         // 7. SPLIT (Dual Gears)
         const sGroup = new THREE.Group();
-        sGroup.add(makeGear(4, 20, matSteel));
-        let g2 = makeGear(4, 20, matGold);
-        g2.position.y = 1;
-        sGroup.add(g2);
+        sGroup.position.y = modules['split'].y;
+        sGroup.add(createGear(4, 24, matSteel, 0));
+        sGroup.add(createGear(4, 24, matGold, 1.5));
         objects['split'] = sGroup;
-        objects['split'].position.y = modules['split'].y;
         masterGroup.add(sGroup);
 
-        // 8. EQ (Kidney)
-        objects['eq'] = new THREE.Mesh(new THREE.TorusKnotGeometry(3, 0.5, 64, 8), matGold);
-        objects['eq'].position.y = modules['eq'].y;
-        masterGroup.add(objects['eq']);
+        // 8. EQUATION (Kidney)
+        const eqGroup = new THREE.Group();
+        eqGroup.position.y = modules['eq'].y;
+        const kidney = new THREE.Mesh(new THREE.TorusKnotGeometry(3, 0.8, 64, 8, 2, 3), matGold);
+        eqGroup.add(kidney);
+        objects['eq'] = eqGroup;
+        masterGroup.add(eqGroup);
 
-        // 9. MOON
-        objects['moon'] = new THREE.Mesh(new THREE.SphereGeometry(4, 32, 32), new THREE.MeshStandardMaterial({color:0xeeeeee, roughness:0.8}));
+        // 9. MOON (Sphere)
+        objects['moon'] = new THREE.Mesh(new THREE.SphereGeometry(4, 32, 32), new THREE.MeshStandardMaterial({color:0xcccccc, roughness:0.9}));
         objects['moon'].position.y = modules['moon'].y;
         masterGroup.add(objects['moon']);
 
-        // SPINE
-        const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 90, 8), matWire);
+        // Spine
+        const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 100, 8), matSteel);
         masterGroup.add(spine);
 
 
-        // --- INTERACTION LOGIC ---
+        // --- UI & INTERACTION ---
         const nav = document.getElementById('top-nav');
-        const infoBox = document.getElementById('bottom-info');
         const infoTitle = document.getElementById('info-title');
         const infoDesc = document.getElementById('info-desc');
 
-        // Build Menu
+        // Generate Buttons
         Object.keys(modules).forEach(key => {
             const btn = document.createElement('button');
             btn.className = 'nav-btn';
-            btn.innerText = key.toUpperCase();
-            btn.onclick = () => selectModule(key, btn);
+            btn.innerText = modules[key].title.split(' (')[0]; // Show English title only in button for clean look
+            btn.onclick = () => setMode(key, btn);
             nav.appendChild(btn);
         });
 
-        let currentTargetY = 0;
-
-        function selectModule(key, btn) {
-            // Update UI
+        function setMode(key, btn) {
+            // Update UI active state
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // Show Info
+            // Update Info Box
             infoTitle.innerText = modules[key].title;
             infoDesc.innerText = modules[key].desc;
-            infoBox.classList.add('visible');
 
-            // Camera Move
+            // Calculate Target Camera Position (No TWEEN, just setting targets)
+            const m = modules[key];
             if(key === 'all') {
-                new TWEEN.Tween(camera.position).to({x: 60, y: 10, z: 60}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-                new TWEEN.Tween(controls).to({y: 0}, 1000).start();
-                // Reset Opacity
-                Object.values(objects).forEach(o => {
-                    o.traverse(c => { if(c.material) c.material.opacity = 1; c.material.transparent = false; });
+                targetCamPos.set(60, 20, 60);
+                targetLookAt.set(0, 0, 0);
+                // Reset Visibility (Make all opaque)
+                masterGroup.traverse(child => {
+                    if(child.isMesh && child.material) {
+                        child.material.transparent = false;
+                        child.material.opacity = 1.0;
+                    }
                 });
             } else {
-                const targetY = modules[key].y;
-                new TWEEN.Tween(camera.position).to({x: 30, y: targetY + 5, z: 30}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-                new TWEEN.Tween(controls).to({y: targetY}, 1000).start();
+                // Zoom to specific module
+                targetCamPos.set(30, m.y + 5, 30); // Angle view
+                targetLookAt.set(0, m.y, 0);
                 
-                // Focus Effect (Dim others)
-                Object.keys(objects).forEach(k => {
-                    const obj = objects[k];
-                    const isTarget = (k === key);
-                    obj.traverse(c => {
-                        if(c.material) {
-                            c.material.transparent = true;
-                            c.material.opacity = isTarget ? 1 : 0.1;
+                // Focus Effect (Transparency)
+                masterGroup.traverse(child => {
+                    if(child.isMesh && child.material) {
+                        child.material.transparent = true;
+                        child.material.opacity = 0.1;
+                    }
+                });
+                
+                // Highlight selected object and its children
+                if(objects[key]) {
+                    objects[key].traverse(child => {
+                        if(child.isMesh && child.material) {
+                            child.material.opacity = 1.0;
+                            child.material.transparent = false;
                         }
                     });
-                });
+                }
             }
         }
 
-        // Default Select
-        selectModule('all', document.querySelector('.nav-btn'));
+        // Set Initial State
+        setMode('all', document.querySelector('.nav-btn'));
 
 
-        // --- RENDER LOOP ---
-        let controls = { y: 0 }; // LookAt target Y
+        // --- ANIMATION LOOP ---
         let isDragging = false;
-        let prevMouse = { x: 0, y: 0 };
+        let prevMouse = {x:0, y:0};
 
-        document.addEventListener('mousedown', (e) => { if(e.target.tagName !== 'BUTTON') isDragging = true; });
+        // Mouse Interaction
+        document.addEventListener('mousedown', e => { if(e.target.tagName !== 'BUTTON') isDragging = true; });
         document.addEventListener('mouseup', () => isDragging = false);
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', e => {
             if(isDragging) {
                 const dx = e.clientX - prevMouse.x;
                 const dy = e.clientY - prevMouse.y;
                 masterGroup.rotation.y += dx * 0.005;
                 masterGroup.rotation.x += dy * 0.005;
             }
-            prevMouse = { x: e.clientX, y: e.clientY };
-        });
-        document.addEventListener('wheel', (e) => {
-            camera.zoom -= e.deltaY * 0.001;
-            camera.zoom = Math.max(0.5, Math.min(3, camera.zoom));
-            camera.updateProjectionMatrix();
+            prevMouse = {x:e.clientX, y:e.clientY};
         });
 
-        function animate(time) {
+        // Manual Lerp Function
+        function lerp(start, end, alpha) {
+            return start + (end - start) * alpha;
+        }
+
+        function animate() {
             requestAnimationFrame(animate);
-            TWEEN.update(time);
 
-            // Constant Rotation
+            // 1. Camera Smooth Movement (The custom lerp magic)
+            camera.position.x = lerp(camera.position.x, targetCamPos.x, 0.05);
+            camera.position.y = lerp(camera.position.y, targetCamPos.y, 0.05);
+            camera.position.z = lerp(camera.position.z, targetCamPos.z, 0.05);
+            
+            // We need a currentLookAt vector to lerp the focus point too
+            // But for simplicity, we can just lookAt the targetLookAt mixed with current position? 
+            // Actually, just looking at the targetLookAt directly is fine if camera moves smoothly
+            // To make lookAt smooth, we need a dedicated vector
+            
+            // (Simplified LookAt logic)
+            camera.lookAt(targetLookAt.x, targetLookAt.y, targetLookAt.z);
+
+            // 2. Object Rotation
             if(!isDragging) masterGroup.rotation.y += 0.002;
 
-            // Individual Anim
-            objects['tourbillon'].rotation.x += 0.05;
-            objects['tourbillon'].rotation.y += 0.02;
-            objects['chinese'].rotation.z -= 0.01;
-            objects['sky'].rotation.y += 0.001;
+            // 3. Module specific animations
+            if(objects['tourbillon']) {
+                objects['tourbillon'].rotation.y += 0.02;
+                objects['tourbillon'].children[1].rotation.x += 0.04; // inner cage
+            }
+            if(objects['chinese']) objects['chinese'].rotation.z -= 0.01;
+            if(objects['sky']) objects['sky'].rotation.y += 0.001;
+            if(objects['split']) {
+                objects['split'].children[1].rotation.y += 0.03;
+            }
 
-            camera.lookAt(0, controls.y, 0);
             renderer.render(scene, camera);
         }
 
         animate();
 
+        // Resize Handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -373,4 +422,3 @@
     </script>
 </body>
 </html>
-
