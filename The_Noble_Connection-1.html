@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Noble Connection | DongMicus Noir</title>
     
-    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
-    <!-- Optimized Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -27,7 +25,8 @@
                         'noir-gray': '#A0A0A0'
                     },
                     fontFamily: {
-                        'display': ['Bodoni Moda', 'serif'],
+                        'display': ['Bodoni Moda', 'serif'], /* Original for Body Headings */
+                        'title': ['Playfair Display', 'serif'], /* New for Main Title Only */
                         'body': ['Lora', 'serif'],
                         'ui': ['Manrope', 'sans-serif'],
                     }
@@ -82,45 +81,57 @@
         }
 
         .gold-border { border-color: rgba(212, 175, 55, 0.4); }
+        
+        /* Utility for nice text wrapping in header */
+        .text-balance { text-wrap: balance; }
     </style>
 </head>
 <body class="selection:bg-noir-gold selection:text-black">
 
     <div class="ambient-light"></div>
 
-    <!-- Navigation -->
     <nav class="fixed top-0 w-full px-8 py-8 flex justify-between items-center z-50 mix-blend-screen text-white">
         <div class="font-display font-bold text-2xl tracking-tight">DongMicus <span class="text-noir-gold italic font-normal text-lg">Noir</span></div>
         <div class="font-ui text-xs font-bold tracking-[0.2em] uppercase opacity-80">Vol. 25 • Issue 11</div>
     </nav>
 
-    <!-- Header -->
     <header class="relative min-h-screen flex flex-col justify-center items-center px-6 z-10">
-        <div class="text-center max-w-5xl">
-            <p class="font-ui text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-6 animate-fade-in opacity-0">
+        <div class="text-center max-w-7xl mx-auto flex flex-col items-center">
+            
+            <p class="font-ui text-[10px] md:text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-8 animate-fade-in opacity-0">
                 The Art of Execution
             </p>
             
-            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl leading-[0.9] text-white mb-10">
-                <span class="block overflow-hidden"><span class="block reveal-header translate-y-full">Trust, Influence, Execute </span></span>
-                <span class="block overflow-hidden"><span class="block reveal-header translate-y-full italic text-noir-gold opacity-90 delay-100">Turning credibility into deal flow</span></span>
-            </h1>
+            <div class="overflow-hidden mb-4 w-full">
+                <h1 class="font-title text-6xl md:text-8xl font-bold text-white tracking-tight leading-none reveal-header translate-y-full text-balance">
+                    Trust, Influence, Execute
+                </h1>
+            </div>
 
-            <div class="w-[1px] h-24 bg-gradient-to-b from-transparent via-noir-gold to-transparent mx-auto opacity-0 reveal-line"></div>
+            <div class="overflow-hidden mb-12 w-full">
+                <p class="font-title text-3xl md:text-5xl italic text-noir-gold opacity-90 reveal-header translate-y-full delay-100 font-medium text-balance">
+                    Turning credibility into deal flow
+                </p>
+            </div>
+
+            <div class="w-[1px] h-20 bg-gradient-to-b from-transparent via-noir-gold to-transparent mx-auto opacity-0 reveal-line mb-8"></div>
+
+            <div class="flex flex-row justify-center gap-8 font-ui text-[10px] md:text-xs tracking-widest text-gray-500 uppercase animate-fade-in opacity-0">
+                <span>• Strategy</span>
+                <span>• Network</span>
+                <span>• Outcome</span>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="relative z-10 w-full pb-32">
 
-        <!-- Intro -->
         <section class="max-w-4xl mx-auto px-6 py-32">
             <div class="font-body text-2xl md:text-3xl leading-[1.7] text-gray-200 text-justify reveal-text opacity-0 translate-y-8">
                 <span class="drop-cap">G</span>rowing startups and securing investment depend not on a “title of expertise,” but on execution—the ability to take action that meets real needs. When I first joined my organisation, I knew little about entrepreneurship. Over the past decade, observing countless founders up close taught me that what startups ultimately need are networks—the people and capital that connect and accelerate their growth.
             </div>
         </section>
 
-        <!-- Chapter 1 -->
         <section class="py-24 border-t border-white/10">
             <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-16">
                 <div class="md:col-span-4 sticky top-32 h-fit">
@@ -150,7 +161,6 @@
             </div>
         </section>
 
-        <!-- Chapter 2 -->
         <section class="py-32 bg-[#050505]">
             <div class="max-w-5xl mx-auto px-6">
                 <div class="text-center mb-20">
@@ -192,7 +202,6 @@
             </div>
         </section>
 
-        <!-- Chapter 3 -->
         <section class="py-32 relative">
             <div class="max-w-4xl mx-auto px-6 z-10 relative">
                 <span class="font-ui text-xs font-bold tracking-[0.2em] text-noir-gold uppercase mb-4 block">03. STRATEGY</span>
@@ -215,7 +224,6 @@
             </div>
         </section>
 
-        <!-- Chapter 4 & 5 -->
         <section class="py-32 bg-[#0F0F0F]">
             <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row gap-16">
                 <div class="md:w-1/2 space-y-20">
@@ -240,8 +248,7 @@
                 </div>
 
                 <div class="md:w-1/2 flex flex-col justify-center border-l border-white/10 pl-12 space-y-12">
-                     <!-- Location Items -->
-                    <div class="group cursor-default">
+                     <div class="group cursor-default">
                         <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300">Singapore</div>
                         <p class="font-ui text-xs tracking-widest text-noir-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Connection with e27</p>
                     </div>
@@ -257,7 +264,6 @@
             </div>
         </section>
 
-        <!-- Chapter 6 -->
         <section class="py-32">
             <div class="max-w-4xl mx-auto px-6 text-center">
                 <h2 class="font-display text-5xl text-white mb-16 leading-tight">
@@ -276,7 +282,6 @@
             </div>
         </section>
 
-        <!-- Final Lesson -->
         <section class="py-40 border-t border-white/10">
             <div class="max-w-3xl mx-auto px-6 text-center">
                 <span class="font-ui text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-8 block">Final Lesson</span>
@@ -304,7 +309,6 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="py-12 px-6 border-t border-white/5 bg-black text-center">
         <p class="font-ui text-xs font-bold tracking-widest text-gray-600 uppercase">
             © 2025 DongMicus Noir. All Rights Reserved.
@@ -316,7 +320,7 @@
 
         // Header Animations
         const tl = gsap.timeline();
-        tl.to('.reveal-header', { y: 0, stagger: 0.15, duration: 1.2, ease: 'power4.out' })
+        tl.to('.reveal-header', { y: 0, stagger: 0.15, duration: 1.4, ease: 'power4.out' })
           .to('.reveal-line', { opacity: 1, duration: 1 }, "-=0.5")
           .to('.animate-fade-in', { opacity: 1, duration: 1 }, "-=0.8");
 
