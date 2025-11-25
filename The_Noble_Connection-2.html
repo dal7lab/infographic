@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Noble Connection | DongMicus Editorial</title>
     
-    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
-    <!-- Optimized Fonts for Sharpness -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,800;1,6..96,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,800;1,6..96,400&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -27,6 +25,7 @@
                     },
                     fontFamily: {
                         'display': ['Bodoni Moda', 'serif'],
+                        'title': ['Playfair Display', 'serif'], /* Added for Header */
                         'body': ['Lora', 'serif'],
                         'ui': ['Manrope', 'sans-serif'],
                     }
@@ -69,23 +68,22 @@
         
         /* Interactive Lines */
         .reveal-line {
-            height: 2px; /* Thicker for sharpness */
             background-color: #050505;
-            width: 0;
-            transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: height 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Adjusted for vertical */
         }
-        .reveal-line.active { width: 100%; }
 
         /* Custom Selection */
         ::selection {
             background: #050505;
             color: #ffffff;
         }
+        
+        /* Utility */
+        .text-balance { text-wrap: balance; }
     </style>
 </head>
 <body class="overflow-x-hidden selection:bg-brand-black selection:text-white">
 
-    <!-- Navigation -->
     <nav class="fixed top-0 w-full px-8 py-6 flex justify-between items-center z-50 bg-brand-paper/90 backdrop-blur-sm border-b border-sharp">
         <div class="font-display font-bold text-2xl tracking-tight text-brand-black">
             DongMicus
@@ -95,37 +93,44 @@
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="relative min-h-screen flex flex-col justify-center items-center px-6 pt-20">
-        <div class="max-w-6xl w-full text-center z-10 space-y-10">
-            <div class="font-ui text-xs font-extrabold tracking-[0.3em] text-brand-gold uppercase mb-4 animate-fade-in">
-                The Executive Report
+    <header class="relative min-h-screen flex flex-col justify-center items-center px-6 pt-10">
+        <div class="max-w-7xl w-full text-center z-10 flex flex-col items-center">
+            
+            <div class="font-ui text-[10px] md:text-xs font-extrabold tracking-[0.3em] text-brand-gold uppercase mb-8 animate-fade-in opacity-0">
+                The Art of Execution
             </div>
             
-            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl leading-[0.95] text-brand-black mb-8">
-                <span class="block overflow-hidden"><span class="block reveal-header translate-y-full">Trust, Influence, Execute</span></span>
-                <span class="block overflow-hidden"><span class="block reveal-header translate-y-full italic text-brand-gray">Turning credibility into deal flow</span></span>
-            </h1>
+            <div class="overflow-hidden mb-4 w-full">
+                <h1 class="font-title text-6xl md:text-8xl lg:text-9xl font-bold text-brand-black tracking-tight leading-none reveal-header translate-y-full text-balance">
+                    Trust, Influence, Execute
+                </h1>
+            </div>
 
-            <div class="h-[2px] w-24 bg-brand-black mx-auto reveal-scale scale-x-0 origin-center duration-1000"></div>
+            <div class="overflow-hidden mb-12 w-full">
+                <p class="font-title text-3xl md:text-5xl italic text-brand-gold opacity-90 reveal-header translate-y-full delay-100 font-medium text-balance">
+                    Turning credibility into deal flow
+                </p>
+            </div>
 
-            <p class="font-body text-xl md:text-2xl text-brand-gray max-w-3xl mx-auto mt-8 font-medium animate-fade-in opacity-0">
-                Growing startups and securing investment depend not on a “title of expertise,” but on execution.
-            </p>
+            <div class="w-[1px] h-20 bg-gradient-to-b from-transparent via-brand-black to-transparent mx-auto opacity-0 reveal-line mb-8"></div>
+
+            <div class="flex flex-row justify-center gap-8 font-ui text-[10px] md:text-xs tracking-widest text-brand-gray uppercase animate-fade-in opacity-0">
+                <span>• Strategy</span>
+                <span>• Network</span>
+                <span>• Outcome</span>
+            </div>
+
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="w-full pb-32">
 
-        <!-- Intro Paragraph -->
         <section class="max-w-3xl mx-auto px-6 py-24">
             <div class="font-body text-xl md:text-2xl text-brand-black text-justify reveal-text opacity-0 translate-y-8">
                 <span class="drop-cap">W</span>hen I first joined my organisation, I knew little about entrepreneurship. Over the past decade, observing countless founders up close taught me that what startups ultimately need are networks—the people and capital that connect and accelerate their growth. Growing startups and securing investment depend not on a “title of expertise,” but on execution—the ability to take action that meets real needs.
             </div>
         </section>
 
-        <!-- Chapter 1 -->
         <section class="py-20 border-t border-sharp bg-white">
             <div class="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12">
                 <div class="md:col-span-4 sticky top-32 h-fit">
@@ -153,7 +158,6 @@
             </div>
         </section>
 
-        <!-- Chapter 2 -->
         <section class="py-24 bg-brand-black text-white">
             <div class="max-w-5xl mx-auto px-6">
                 <div class="text-center mb-16">
@@ -190,7 +194,6 @@
             </div>
         </section>
 
-        <!-- Chapter 3 -->
         <section class="py-24 max-w-4xl mx-auto px-6">
             <h2 class="font-display text-4xl mb-10 border-b-2 border-brand-black pb-6 inline-block">
                 Content Strategy
@@ -205,11 +208,9 @@
             </div>
         </section>
 
-        <!-- Chapter 4 & 5 -->
         <section class="py-24 bg-[#F0F0F0]">
             <div class="max-w-6xl mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    <!-- Column 1 -->
                     <div>
                         <span class="font-ui text-xs font-bold text-brand-gold tracking-widest mb-2 block">GLOBAL EXPANSION</span>
                         <h3 class="font-display text-3xl mb-6 font-bold">When LinkedIn Unlocked the World</h3>
@@ -220,7 +221,6 @@
                             Soon after, a LinkedIn connection introduced me to <strong>e27</strong>, Asia’s leading startup and tech media platform. I began contributing articles on investment and tech trends, and before long, I was honoured as a top contributor and thought leader for two consecutive years.
                         </p>
                     </div>
-                    <!-- Column 2 -->
                     <div>
                         <span class="font-ui text-xs font-bold text-brand-gold tracking-widest mb-2 block">PRACTICE</span>
                         <h3 class="font-display text-3xl mb-6 font-bold">Turning Insight into Collaboration</h3>
@@ -241,7 +241,6 @@
             </div>
         </section>
 
-        <!-- Chapter 6 -->
         <section class="py-24 max-w-4xl mx-auto px-6">
             <h2 class="font-display text-4xl mb-12 text-center">When Action Opens Unimaginable Doors</h2>
             <p class="font-body text-xl text-brand-gray text-center mb-12">
@@ -268,7 +267,6 @@
             </p>
         </section>
 
-        <!-- Final Lesson -->
         <section class="py-32 bg-brand-black text-brand-paper text-center">
             <div class="max-w-3xl mx-auto px-6">
                 <span class="font-ui text-xs font-bold tracking-[0.3em] text-brand-gold uppercase mb-8 block">THE FINAL LESSON</span>
@@ -296,7 +294,6 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-sharp py-12 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="font-display font-bold text-xl">DongMicus</div>
@@ -307,10 +304,10 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Header Animations
+        // Header Animations (Updated layout)
         const tl = gsap.timeline();
         tl.to('.reveal-header', { y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.15 })
-          .to('.reveal-scale', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, "-=0.5")
+          .to('.reveal-line', { opacity: 1, duration: 1 }, "-=0.5")
           .to('.animate-fade-in', { opacity: 1, duration: 1 }, "-=0.3");
 
         // Reveal Text on Scroll
