@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Noble Connection | DongMicus Noir v2.0</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'noir-bg': '#080808',
+                        'noir-text': '#EDEDED',
+                        'noir-gold': '#D4AF37', /* Classic Gold */
+                        'noir-gray': '#A0A0A0'
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'], /* Changed for better readability */
+                        'body': ['Lora', 'serif'],
+                        'ui': ['Manrope', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        'tightest': '-0.02em',
+                        'widest': '0.25em',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Rendering Optimization */
+        html { 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale; 
+            text-rendering: optimizeLegibility;
+            scroll-behavior: smooth;
+        }
+        
+        body { 
+            background-color: #080808; 
+            color: #EDEDED;
+            overflow-x: hidden;
+        }
+
+        /* Typography Adjustments */
+        h1, h2, h3 { font-weight: 600; } /* Increased weight for visibility */
+        p { font-weight: 400; line-height: 1.8; color: #D1D1D1; }
+
+        /* Drop Cap Style */
+        .drop-cap {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            line-height: 0.8;
+            font-weight: 700;
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+            color: #D4AF37;
+        }
+
+        /* Ambient Light Effect */
+        .ambient-light {
+            position: fixed;
+            top: 40%; left: 50%;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, rgba(0,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        /* Selection */
+        ::selection { background: #D4AF37; color: #000; }
+        
+        /* Utility for Text Balance */
+        .text-balance { text-wrap: balance; }
+    </style>
+</head>
+<body class="selection:bg-noir-gold selection:text-black">
+
+    <div class="ambient-light"></div>
+
+    <nav class="fixed top-0 w-full px-6 md:px-12 py-8 flex justify-between items-center z-50 mix-blend-screen text-white">
+        <div class="font-display font-bold text-2xl tracking-tight">DongMicus <span class="text-noir-gold italic font-normal text-xl">Noir</span></div>
+        <div class="hidden md:block font-ui text-[10px] font-bold tracking-widest uppercase opacity-60">Vol. 25 • Issue 11</div>
+    </nav>
+
+    <header class="relative min-h-[90vh] flex flex-col justify-center items-center px-4 z-10">
+        <div class="text-center w-full max-w-7xl mx-auto">
+            <p class="font-ui text-[10px] md:text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-8 animate-fade-in opacity-0">
+                The Art of Execution
+            </p>
+            
+            <h1 class="font-display leading-none text-white mb-10 flex flex-col gap-4">
+                <span class="block overflow-hidden">
+                    <span class="block reveal-header translate-y-full text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-balance">
+                        Trust, Influence, Execute
+                    </span>
+                </span>
+                
+                <span class="block overflow-hidden mt-2 md:mt-4">
+                    <span class="block reveal-header translate-y-full text-2xl md:text-4xl lg:text-5xl italic text-noir-gold opacity-90 delay-100 font-medium">
+                        Turning credibility into deal flow
+                    </span>
+                </span>
+            </h1>
+
+            <div class="w-[1px] h-20 md:h-28 bg-gradient-to-b from-transparent via-noir-gold to-transparent mx-auto opacity-0 reveal-line mt-4"></div>
+            
+            <div class="mt-12 flex justify-center gap-6 md:gap-12 font-ui text-[10px] md:text-xs tracking-widest text-gray-500 uppercase animate-fade-in opacity-0">
+                <span>• Strategy</span>
+                <span>• Network</span>
+                <span>• Outcome</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 w-full pb-32">
+
+        <section class="max-w-3xl mx-auto px-6 py-24 md:py-32">
+            <div class="font-body text-xl md:text-2xl leading-[1.8] text-gray-200 text-justify reveal-text opacity-0 translate-y-8">
+                <span class="drop-cap">G</span>rowing startups and securing investment depend not on a “title of expertise,” but on execution—the ability to take action that meets real needs. When I first joined my organisation, I knew little about entrepreneurship. Over the past decade, observing countless founders up close taught me that what startups ultimately need are networks—the people and capital that connect and accelerate their growth.
+            </div>
+        </section>
+
+        <section class="py-24 border-t border-white/10">
+            <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
+                <div class="md:col-span-4 md:sticky md:top-32 h-fit text-center md:text-left">
+                    <span class="font-ui text-xs text-noir-gold tracking-widest font-bold block mb-4">01. REALITY</span>
+                    <h2 class="font-display text-4xl md:text-5xl text-white leading-tight font-semibold">
+                        When Setbacks<br>
+                        <span class="italic text-gray-500 font-medium">Became Lessons</span>
+                    </h2>
+                </div>
+                
+                <div class="md:col-span-8 space-y-12">
+                    <p class="font-body text-lg md:text-xl leading-relaxed text-gray-300">
+                        Nurturing startups outside Seoul was never easy. I rushed from meeting to meeting, but geography and time were constant barriers. I still remember one early attempt—emailing a well-known accelerator partner to introduce our portfolio companies.
+                    </p>
+                    
+                    <div class="relative py-12 px-8 border border-white/10 bg-white/[0.02] backdrop-blur-sm group hover:border-noir-gold/50 transition-all duration-500">
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-noir-bg border border-noir-gold/30 rounded-full flex items-center justify-center">
+                            <span class="text-noir-gold text-xs">❝</span>
+                        </div>
+                        <p class="font-display text-2xl md:text-3xl italic text-center text-white group-hover:text-noir-gold transition-colors duration-300">
+                            Please send it to the company’s representative email address.
+                        </p>
+                        <p class="font-ui text-center text-[10px] tracking-widest text-noir-gray mt-6 uppercase">The Cold Response</p>
+                    </div>
+
+                    <p class="font-body text-lg md:text-xl leading-relaxed text-gray-300">
+                        My heart sank. In that moment, I learned a hard truth: before anyone will listen, you must first build your own credibility as the connector.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 bg-[#050505]">
+            <div class="max-w-5xl mx-auto px-6">
+                <div class="text-center mb-20">
+                    <h2 class="font-display text-5xl md:text-6xl text-white mb-6 font-semibold">Breaking Through</h2>
+                    <div class="w-16 h-[2px] bg-noir-gold mx-auto"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-start">
+                    <div class="font-body text-lg md:text-xl text-gray-400 leading-relaxed space-y-8">
+                        <p>
+                            Still, giving up was not an option. To help startups raise investment, I had to find a new way forward. I turned to the digital world — starting with Facebook, where Korean investor networks were most active at the time, and LinkedIn, the global hub for professional connections.
+                        </p>
+                        <p>
+                            Working at a government-affiliated organisation gave me some initial credibility... But proving that the startups I supported were truly viable and innovative — that was an entirely different challenge.
+                        </p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="font-display text-3xl italic text-noir-gold mb-8">The Trust Signal</div>
+                        <ul class="space-y-px bg-white/10 border border-white/10">
+                            <li class="bg-noir-bg p-6 flex justify-between items-center group hover:bg-[#111] transition-all cursor-crosshair">
+                                <span class="font-ui text-xs font-bold tracking-widest text-white">PROFESSIONAL STUDIO PHOTO</span>
+                                <span class="text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:rotate-90 duration-300">✦</span>
+                            </li>
+                            <li class="bg-noir-bg p-6 flex justify-between items-center group hover:bg-[#111] transition-all cursor-crosshair">
+                                <span class="font-ui text-xs font-bold tracking-widest text-white">CLEAN BANNER DESIGN</span>
+                                <span class="text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:rotate-90 duration-300">✦</span>
+                            </li>
+                            <li class="bg-noir-bg p-6 flex justify-between items-center group hover:bg-[#111] transition-all cursor-crosshair">
+                                <span class="font-ui text-xs font-bold tracking-widest text-white">OUTCOMES-FOCUSED BIO</span>
+                                <span class="text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:rotate-90 duration-300">✦</span>
+                            </li>
+                        </ul>
+                        <p class="font-body text-lg italic text-gray-500 mt-6 text-center">
+                            "Make credibility visible before making any ask."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 relative">
+            <div class="max-w-4xl mx-auto px-6 z-10 relative">
+                <span class="font-ui text-xs font-bold tracking-widest text-noir-gold uppercase mb-4 block">03. STRATEGY</span>
+                <h2 class="font-display text-4xl md:text-5xl text-white mb-12 font-semibold leading-tight">Turning Writing into<br>a Bridge of Trust</h2>
+
+                <p class="font-body text-xl md:text-2xl leading-relaxed text-gray-300 mb-16">
+                    Once I had grown my networks to over <span class="text-noir-gold font-semibold border-b border-noir-gold/50 pb-1">3,000 connections</span> on each platform, I began to write. I shared insights from an investor’s perspective — startup appeal factors, funding trends, expert interviews, and even film reviews about entrepreneurship.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/10 pt-12">
+                    <div class="group">
+                        <div class="text-xs font-ui font-bold tracking-widest text-gray-500 mb-3 group-hover:text-white transition-colors">INPUT</div>
+                        <p class="font-body text-lg text-gray-400 pl-4 border-l border-gray-800 group-hover:border-noir-gold transition-colors">Consistent articles on social media and in investor group chats.</p>
+                    </div>
+                    <div class="group">
+                        <div class="text-xs font-ui font-bold tracking-widest text-noir-gold mb-3">OUTPUT</div>
+                        <p class="font-body text-lg text-white pl-4 border-l border-noir-gold">Barriers lowered. Investors became open to collaboration.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 bg-[#0F0F0F]">
+            <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row gap-20">
+                <div class="md:w-1/2 space-y-24">
+                    <div>
+                        <h2 class="font-display text-3xl md:text-4xl text-white mb-6">
+                            <span class="text-noir-gold opacity-60 text-lg block mb-3 font-ui font-bold tracking-widest">04</span>
+                            LinkedIn Unlocked the World
+                        </h2>
+                        <p class="font-body text-lg text-gray-400 leading-relaxed">
+                            Then came a new mission: global expansion and overseas investment attraction. It felt almost impossible at first. But everything changed the day I connected—through LinkedIn—with an influencer and startup community manager at a global tech company in Singapore.
+                        </p>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-3xl md:text-4xl text-white mb-6">
+                            <span class="text-noir-gold opacity-60 text-lg block mb-3 font-ui font-bold tracking-widest">05</span>
+                            Expanding into Practice
+                        </h2>
+                        <p class="font-body text-lg text-gray-400 leading-relaxed">
+                            Our organisation is based in Osong, a national biotech cluster in Korea... Through multiple surveys, I found that many startups were eager to enter the US market. With that insight, I began ongoing online networking, which eventually led to co-hosted IR sessions and global expansion seminars.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="md:w-1/2 flex flex-col justify-center border-l border-white/10 pl-8 md:pl-16 space-y-16">
+                      <div class="group cursor-default">
+                        <div class="font-display text-4xl md:text-5xl text-gray-700 group-hover:text-white transition-colors duration-500 font-medium">Singapore</div>
+                        <div class="h-px w-0 bg-noir-gold group-hover:w-24 transition-all duration-500 mt-2 mb-2"></div>
+                        <p class="font-ui text-xs tracking-widest text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity">Connection with e27</p>
+                    </div>
+                    <div class="group cursor-default">
+                        <div class="font-display text-4xl md:text-5xl text-gray-700 group-hover:text-white transition-colors duration-500 font-medium">Silicon Valley</div>
+                        <div class="h-px w-0 bg-noir-gold group-hover:w-24 transition-all duration-500 mt-2 mb-2"></div>
+                        <p class="font-ui text-xs tracking-widest text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity">Tech Accelerators</p>
+                    </div>
+                    <div class="group cursor-default">
+                        <div class="font-display text-4xl md:text-5xl text-gray-700 group-hover:text-white transition-colors duration-500 font-medium">Los Angeles</div>
+                        <div class="h-px w-0 bg-noir-gold group-hover:w-24 transition-all duration-500 mt-2 mb-2"></div>
+                        <p class="font-ui text-xs tracking-widest text-noir-gold opacity-0 group-hover:opacity-100 transition-opacity">Global Seminars</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <h2 class="font-display text-4xl md:text-5xl text-white mb-16 leading-tight font-semibold">
+                    When Action Opens<br><span class="italic text-gray-500 font-medium">Unimaginable Doors</span>
+                </h2>
+
+                <p class="font-body text-xl text-gray-400 mb-16">
+                    Helping startups grow requires more than just networks or content. Real opportunities emerged when writing and execution came together.
+                </p>
+
+                <div class="border-y border-white/10 py-16 space-y-10">
+                    <p class="font-display text-2xl md:text-3xl text-white hover:text-noir-gold transition-colors duration-300 cursor-default">Collaborations with global tech accelerators</p>
+                    <p class="font-display text-2xl md:text-3xl text-white hover:text-noir-gold transition-colors duration-300 cursor-default">Named "Global Women Influencer"</p>
+                    <p class="font-display text-2xl md:text-3xl text-white hover:text-noir-gold transition-colors duration-300 cursor-default">Ambassador for WomenTech Network</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-40 border-t border-white/10 bg-gradient-to-b from-transparent to-[#111]">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <span class="font-ui text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-10 block">Final Lesson</span>
+                
+                <h2 class="font-display text-6xl md:text-8xl leading-[0.9] text-white mb-12 font-bold">
+                    Write. Record.<br><span class="italic text-noir-gold font-medium">Share.</span>
+                </h2>
+
+                <p class="font-body text-xl md:text-2xl text-gray-300 leading-relaxed mb-16 max-w-2xl mx-auto">
+                    In the end, the fastest way to reach investors was not by chasing them, but by continuously sharing credible, in-depth insights that they genuinely want to read.
+                </p>
+
+                <div class="relative py-12 px-8 md:px-16 border border-noir-gold/30 inline-block bg-white/[0.02] max-w-3xl">
+                    <span class="absolute top-0 left-0 text-6xl text-noir-gold/20 font-display -translate-x-1/2 -translate-y-1/2">“</span>
+                    <p class="font-display text-2xl md:text-4xl italic text-white leading-tight">
+                        Start writing. Start recording. Start sharing — today. The results waiting for you may be far greater than you can imagine.
+                    </p>
+                    <span class="absolute bottom-0 right-0 text-6xl text-noir-gold/20 font-display translate-x-1/2 translate-y-1/2">”</span>
+                </div>
+
+                <div class="mt-20 text-gray-500 space-y-4">
+                    <p class="font-body text-lg italic text-noir-gold">Credibility compounds when it’s shared</p>
+                    <div class="flex flex-col md:flex-row justify-center gap-2 md:gap-8 font-ui text-[10px] font-bold tracking-widest uppercase opacity-70">
+                        <span>Write to be understood</span>
+                        <span class="hidden md:inline">•</span>
+                        <span>Execute to be believed</span>
+                        <span class="hidden md:inline">•</span>
+                        <span>Connect to be remembered</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-12 px-6 border-t border-white/5 bg-black text-center">
+        <p class="font-ui text-[10px] font-bold tracking-widest text-gray-600 uppercase">
+            © 2025 DongMicus Noir. All Rights Reserved.
+        </p>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Header Animations
+        const tl = gsap.timeline();
+        tl.to('.reveal-header', { y: 0, stagger: 0.2, duration: 1.4, ease: 'power4.out' })
+          .to('.reveal-line', { opacity: 1, duration: 1.2 }, "-=0.5")
+          .to('.animate-fade-in', { opacity: 1, duration: 1 }, "-=0.8");
+
+        // Reveal Text
+        gsap.utils.toArray('.reveal-text').forEach(el => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+    </script>
+</body>
+</html>
