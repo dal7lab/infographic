@@ -25,7 +25,7 @@
                     },
                     fontFamily: {
                         'display': ['Bodoni Moda', 'serif'],
-                        'title': ['Playfair Display', 'serif'], /* Added for Header */
+                        'title': ['Playfair Display', 'serif'],
                         'body': ['Lora', 'serif'],
                         'ui': ['Manrope', 'sans-serif'],
                     }
@@ -35,51 +35,15 @@
     </script>
 
     <style>
-        /* Sharpness Optimization */
-        html { 
-            -webkit-font-smoothing: antialiased; 
-            -moz-osx-font-smoothing: grayscale; 
-            text-rendering: optimizeLegibility;
-        }
-        
-        body { 
-            background-color: #FAFAF9; 
-            color: #050505;
-        }
-
-        /* Typography Hierarchy */
+        html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+        body { background-color: #FAFAF9; color: #050505; }
         h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; }
         p { font-weight: 400; line-height: 1.8; }
-
-        .drop-cap {
-            float: left;
-            font-family: 'Bodoni Moda', serif;
-            font-size: 5.5rem;
-            line-height: 0.8;
-            font-weight: 700;
-            margin-right: 1rem;
-            margin-top: 0.5rem;
-            color: #050505;
-        }
-
-        /* UI Elements */
+        .drop-cap { float: left; font-family: 'Bodoni Moda', serif; font-size: 5.5rem; line-height: 0.8; font-weight: 700; margin-right: 1rem; margin-top: 0.5rem; color: #050505; }
         .gold-accent { color: #B89146; }
         .border-sharp { border-color: rgba(5, 5, 5, 0.1); }
-        
-        /* Interactive Lines */
-        .reveal-line {
-            background-color: #050505;
-            transition: height 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Adjusted for vertical */
-        }
-
-        /* Custom Selection */
-        ::selection {
-            background: #050505;
-            color: #ffffff;
-        }
-        
-        /* Utility */
-        .text-balance { text-wrap: balance; }
+        .reveal-line { background-color: #050505; transition: height 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        ::selection { background: #050505; color: #ffffff; }
     </style>
 </head>
 <body class="overflow-x-hidden selection:bg-brand-black selection:text-white">
@@ -101,13 +65,13 @@
             </div>
             
             <div class="overflow-hidden mb-4 w-full">
-                <h1 class="font-title text-6xl md:text-8xl lg:text-9xl font-bold text-brand-black tracking-tight leading-none reveal-header translate-y-full text-balance">
+                <h1 class="font-title text-4xl md:text-6xl lg:text-7xl font-bold text-brand-black tracking-tight leading-none reveal-header translate-y-full md:whitespace-nowrap">
                     Trust, Influence, Execute
                 </h1>
             </div>
 
             <div class="overflow-hidden mb-12 w-full">
-                <p class="font-title text-3xl md:text-5xl italic text-brand-gold opacity-90 reveal-header translate-y-full delay-100 font-medium text-balance">
+                <p class="font-title text-2xl md:text-4xl italic text-brand-gold opacity-90 reveal-header translate-y-full delay-100 font-medium">
                     Turning credibility into deal flow
                 </p>
             </div>
@@ -124,13 +88,11 @@
     </header>
 
     <main class="w-full pb-32">
-
         <section class="max-w-3xl mx-auto px-6 py-24">
             <div class="font-body text-xl md:text-2xl text-brand-black text-justify reveal-text opacity-0 translate-y-8">
                 <span class="drop-cap">W</span>hen I first joined my organisation, I knew little about entrepreneurship. Over the past decade, observing countless founders up close taught me that what startups ultimately need are networks—the people and capital that connect and accelerate their growth. Growing startups and securing investment depend not on a “title of expertise,” but on execution—the ability to take action that meets real needs.
             </div>
         </section>
-
         <section class="py-20 border-t border-sharp bg-white">
             <div class="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12">
                 <div class="md:col-span-4 sticky top-32 h-fit">
@@ -291,7 +253,6 @@
                 </p>
             </div>
         </section>
-
     </main>
 
     <footer class="bg-white border-t border-sharp py-12 px-6">
@@ -304,7 +265,7 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Header Animations (Updated layout)
+        // Header Animations
         const tl = gsap.timeline();
         tl.to('.reveal-header', { y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.15 })
           .to('.reveal-line', { opacity: 1, duration: 1 }, "-=0.5")
@@ -323,7 +284,6 @@
                 ease: "power3.out"
             });
         });
-
     </script>
 </body>
 </html>
