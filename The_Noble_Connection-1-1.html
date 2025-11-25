@@ -25,7 +25,7 @@
                         'noir-gray': '#A0A0A0'
                     },
                     fontFamily: {
-                        'display': ['Playfair Display', 'serif'], /* 폰트 변경: Bodoni -> Playfair */
+                        'display': ['Playfair Display', 'serif'], /* 폰트 교체됨 */
                         'body': ['Lora', 'serif'],
                         'ui': ['Manrope', 'sans-serif'],
                     }
@@ -35,11 +35,12 @@
     </script>
 
     <style>
-        /* Sharpness Optimization */
+        /* Rendering Optimization */
         html { 
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale; 
             text-rendering: optimizeLegibility;
+            scroll-behavior: smooth;
         }
         
         body { 
@@ -48,39 +49,36 @@
             overflow-x: hidden; /* 가로 스크롤 방지 */
         }
 
-        /* Typography */
-        h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; } /* 두께감 조정 */
+        /* Typography Adjustments */
+        h1, h2, h3 { font-weight: 600; } 
         p { font-weight: 400; line-height: 1.8; color: #D1D1D1; }
 
         .drop-cap {
             float: left;
             font-family: 'Playfair Display', serif;
-            font-size: 5.5rem;
+            font-size: 5rem;
             line-height: 0.8;
             font-weight: 700;
-            margin-right: 1.25rem;
-            margin-top: 0.5rem;
+            margin-right: 1rem;
+            margin-top: 0.2rem;
             color: #D4AF37;
         }
 
-        /* Ambient Glow (이미지 느낌 반영) */
+        /* Ambient Light Effect */
         .ambient-light {
             position: fixed;
             top: 40%; left: 50%;
-            width: 90vw; height: 90vh;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.07) 0%, rgba(0,0,0,0) 65%);
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, rgba(0,0,0,0) 70%);
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 0;
         }
 
         /* Selection */
-        ::selection {
-            background: #D4AF37;
-            color: #000;
-        }
+        ::selection { background: #D4AF37; color: #000; }
 
-        /* 줄바꿈 최적화 유틸 */
+        /* Text Balance for Headlines */
         .text-balance { text-wrap: balance; }
     </style>
 </head>
@@ -89,44 +87,44 @@
     <div class="ambient-light"></div>
 
     <nav class="fixed top-0 w-full px-8 py-8 flex justify-between items-center z-50 mix-blend-screen text-white">
-        <div class="font-display font-bold text-2xl tracking-tight">DongMicus <span class="text-noir-gold italic font-normal text-lg">Noir</span></div>
-        <div class="font-ui text-xs font-bold tracking-[0.2em] uppercase opacity-80">Vol. 25 • Issue 11</div>
+        <div class="font-display font-bold text-2xl tracking-tight">DongMicus <span class="text-noir-gold italic font-normal text-xl">Noir</span></div>
+        <div class="hidden md:block font-ui text-[10px] font-bold tracking-widest uppercase opacity-60">Vol. 25 • Issue 11</div>
     </nav>
 
     <header class="relative min-h-screen flex flex-col justify-center items-center px-4 z-10">
-        <div class="text-center w-full max-w-7xl">
+        <div class="text-center w-full max-w-7xl mx-auto flex flex-col items-center">
+            
             <p class="font-ui text-[10px] md:text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-6 animate-fade-in opacity-0">
                 The Art of Execution
             </p>
             
-            <h1 class="font-display text-white mb-6">
-                <span class="block overflow-hidden">
-                    <span class="block reveal-header translate-y-full text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-balance leading-none">
-                        Trust, Influence, Execute
-                    </span>
-                </span>
-            </h1>
+            <div class="overflow-hidden mb-2 md:mb-4 w-full">
+                <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-none reveal-header translate-y-full text-balance">
+                    Trust, Influence, Execute
+                </h1>
+            </div>
 
-            <div class="overflow-hidden mb-12">
-                <p class="reveal-header translate-y-full font-display text-2xl md:text-4xl italic text-noir-gold opacity-90 font-medium delay-100">
+            <div class="overflow-hidden mb-10 w-full">
+                <p class="font-display text-2xl md:text-4xl italic text-noir-gold opacity-90 reveal-header translate-y-full delay-100 font-medium text-balance">
                     Turning credibility into deal flow
                 </p>
             </div>
 
-            <div class="w-[1px] h-20 bg-gradient-to-b from-transparent via-noir-gold to-transparent mx-auto opacity-0 reveal-line"></div>
-            
-            <div class="mt-12 flex justify-center gap-8 md:gap-16 font-ui text-[10px] tracking-[0.2em] text-gray-600 uppercase animate-fade-in opacity-0">
+            <div class="w-[1px] h-16 md:h-24 bg-gradient-to-b from-transparent via-noir-gold/50 to-transparent opacity-0 reveal-line mb-8"></div>
+
+            <div class="flex flex-row justify-center gap-6 md:gap-12 font-ui text-[10px] md:text-xs tracking-widest text-gray-500 uppercase animate-fade-in opacity-0">
                 <span>• Strategy</span>
                 <span>• Network</span>
                 <span>• Outcome</span>
             </div>
+
         </div>
     </header>
 
     <main class="relative z-10 w-full pb-32">
 
         <section class="max-w-4xl mx-auto px-6 py-32">
-            <div class="font-body text-2xl md:text-3xl leading-[1.7] text-gray-200 text-justify reveal-text opacity-0 translate-y-8">
+            <div class="font-body text-xl md:text-2xl leading-[1.8] text-gray-200 text-justify reveal-text opacity-0 translate-y-8">
                 <span class="drop-cap">G</span>rowing startups and securing investment depend not on a “title of expertise,” but on execution—the ability to take action that meets real needs. When I first joined my organisation, I knew little about entrepreneurship. Over the past decade, observing countless founders up close taught me that what startups ultimately need are networks—the people and capital that connect and accelerate their growth.
             </div>
         </section>
@@ -135,9 +133,9 @@
             <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-16">
                 <div class="md:col-span-4 sticky top-32 h-fit">
                     <span class="font-ui text-xs text-noir-gold tracking-[0.2em] font-bold block mb-4">01. REALITY</span>
-                    <h2 class="font-display text-5xl text-white leading-tight">
+                    <h2 class="font-display text-4xl md:text-5xl text-white leading-tight font-semibold">
                         When Setbacks<br>
-                        <span class="italic text-gray-500">Became Lessons</span>
+                        <span class="italic text-gray-500 font-medium">Became Lessons</span>
                     </h2>
                 </div>
                 
@@ -163,7 +161,7 @@
         <section class="py-32 bg-[#050505]">
             <div class="max-w-5xl mx-auto px-6">
                 <div class="text-center mb-20">
-                    <h2 class="font-display text-6xl text-white mb-6">Breaking Through</h2>
+                    <h2 class="font-display text-5xl md:text-6xl text-white mb-6 font-semibold">Breaking Through</h2>
                     <div class="w-24 h-1 bg-noir-gold mx-auto"></div>
                 </div>
 
@@ -204,7 +202,7 @@
         <section class="py-32 relative">
             <div class="max-w-4xl mx-auto px-6 z-10 relative">
                 <span class="font-ui text-xs font-bold tracking-[0.2em] text-noir-gold uppercase mb-4 block">03. STRATEGY</span>
-                <h2 class="font-display text-5xl text-white mb-12">Turning Writing into<br>a Bridge of Trust</h2>
+                <h2 class="font-display text-4xl md:text-5xl text-white mb-12 font-semibold">Turning Writing into<br>a Bridge of Trust</h2>
 
                 <p class="font-body text-2xl leading-relaxed text-gray-300 mb-16">
                     Once I had grown my networks to over <span class="text-noir-gold font-semibold border-b border-noir-gold/50">3,000 connections</span> on each platform, I began to write. I shared insights from an investor’s perspective — startup appeal factors, funding trends, expert interviews, and even film reviews about entrepreneurship.
@@ -227,7 +225,7 @@
             <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row gap-16">
                 <div class="md:w-1/2 space-y-20">
                     <div>
-                        <h2 class="font-display text-4xl text-white mb-6">
+                        <h2 class="font-display text-3xl md:text-4xl text-white mb-6">
                             <span class="text-noir-gold opacity-60 text-xl block mb-2 font-ui font-bold tracking-widest">04</span>
                             LinkedIn Unlocked the World
                         </h2>
@@ -236,7 +234,7 @@
                         </p>
                     </div>
                     <div>
-                        <h2 class="font-display text-4xl text-white mb-6">
+                        <h2 class="font-display text-3xl md:text-4xl text-white mb-6">
                             <span class="text-noir-gold opacity-60 text-xl block mb-2 font-ui font-bold tracking-widest">05</span>
                             Expanding into Practice
                         </h2>
@@ -247,16 +245,16 @@
                 </div>
 
                 <div class="md:w-1/2 flex flex-col justify-center border-l border-white/10 pl-12 space-y-12">
-                      <div class="group cursor-default">
-                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300">Singapore</div>
+                     <div class="group cursor-default">
+                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300 font-medium">Singapore</div>
                         <p class="font-ui text-xs tracking-widest text-noir-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Connection with e27</p>
                     </div>
                     <div class="group cursor-default">
-                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300">Silicon Valley</div>
+                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300 font-medium">Silicon Valley</div>
                         <p class="font-ui text-xs tracking-widest text-noir-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Tech Accelerators</p>
                     </div>
                     <div class="group cursor-default">
-                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300">Los Angeles</div>
+                        <div class="font-display text-4xl text-gray-600 group-hover:text-white transition-colors duration-300 font-medium">Los Angeles</div>
                         <p class="font-ui text-xs tracking-widest text-noir-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Global Seminars</p>
                     </div>
                 </div>
@@ -265,8 +263,8 @@
 
         <section class="py-32">
             <div class="max-w-4xl mx-auto px-6 text-center">
-                <h2 class="font-display text-5xl text-white mb-16 leading-tight">
-                    When Action Opens<br><span class="italic text-gray-500">Unimaginable Doors</span>
+                <h2 class="font-display text-4xl md:text-5xl text-white mb-16 leading-tight font-semibold">
+                    When Action Opens<br><span class="italic text-gray-500 font-medium">Unimaginable Doors</span>
                 </h2>
 
                 <p class="font-body text-xl text-gray-400 mb-16">
@@ -274,9 +272,9 @@
                 </p>
 
                 <div class="border-y border-white/10 py-12 space-y-8">
-                    <p class="font-display text-2xl text-white">Collaborations with global tech accelerators</p>
-                    <p class="font-display text-2xl text-white">Named "Global Women Influencer"</p>
-                    <p class="font-display text-2xl text-white">Ambassador for WomenTech Network</p>
+                    <p class="font-display text-2xl md:text-3xl text-white">Collaborations with global tech accelerators</p>
+                    <p class="font-display text-2xl md:text-3xl text-white">Named "Global Women Influencer"</p>
+                    <p class="font-display text-2xl md:text-3xl text-white">Ambassador for WomenTech Network</p>
                 </div>
             </div>
         </section>
@@ -285,8 +283,8 @@
             <div class="max-w-3xl mx-auto px-6 text-center">
                 <span class="font-ui text-xs font-bold tracking-[0.3em] text-noir-gold uppercase mb-8 block">Final Lesson</span>
                 
-                <h2 class="font-display text-6xl md:text-8xl leading-[0.9] text-white mb-12">
-                    Write. Record.<br><span class="italic text-noir-gold">Share.</span>
+                <h2 class="font-display text-6xl md:text-8xl leading-[0.9] text-white mb-12 font-bold">
+                    Write. Record.<br><span class="italic text-noir-gold font-medium">Share.</span>
                 </h2>
 
                 <p class="font-body text-xl text-gray-300 leading-relaxed mb-16">
@@ -317,13 +315,13 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Header Animations (Updated for new structure)
+        // Header Animations (Updated for new layout)
         const tl = gsap.timeline();
-        tl.to('.reveal-header', { y: 0, stagger: 0.2, duration: 1.4, ease: 'power4.out' })
-          .to('.reveal-line', { opacity: 1, duration: 1.2 }, "-=0.5")
+        tl.to('.reveal-header', { y: 0, stagger: 0.15, duration: 1.4, ease: 'power4.out' })
+          .to('.reveal-line', { opacity: 1, duration: 1 }, "-=0.5")
           .to('.animate-fade-in', { opacity: 1, duration: 1 }, "-=0.8");
 
-        // Reveal Text (Existing)
+        // Reveal Text
         gsap.utils.toArray('.reveal-text').forEach(el => {
             gsap.to(el, {
                 scrollTrigger: {
