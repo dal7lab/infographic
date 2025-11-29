@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근전도 검사 안심 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .slide-in { animation: slideIn 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+        .pulse-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .hidden-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #1d4ed8; font-weight: 700; }
+        .check-circle { transition: all 0.2s; }
+        .check-circle.checked { background-color: #22c55e; border-color: #22c55e; }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                근전도 검사 가이드
+            </h1>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">환자용 안내서</span>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white py-12 px-4 text-center">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold mb-4">걱정하지 마세요,<br>정확한 치료의 시작입니다.</h2>
+            <p class="text-blue-100 mb-6 text-lg">근전도 검사는 신경과 근육의 건강 상태를 확인하는<br>가장 확실한 방법입니다.</p>
+            <div class="flex justify-center space-x-2 text-sm">
+                <span class="bg-white/20 px-3 py-1 rounded-full">⏱ 소요시간: 약 30~60분</span>
+                <span class="bg-white/20 px-3 py-1 rounded-full">🛡 안전한 검사</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <nav class="bg-white border-b sticky top-[60px] z-40 overflow-x-auto">
+        <div class="max-w-4xl mx-auto flex whitespace-nowrap">
+            <button onclick="switchTab('overview')" id="tab-overview" class="tab-active flex-1 px-4 py-4 text-sm hover:bg-slate-50 transition">검사 개요 & 목적</button>
+            <button onclick="switchTab('process')" id="tab-process" class="flex-1 px-4 py-4 text-sm hover:bg-slate-50 transition">진행 과정 (시뮬레이션)</button>
+            <button onclick="switchTab('pain')" id="tab-pain" class="flex-1 px-4 py-4 text-sm hover:bg-slate-50 transition">통증 & 궁금증</button>
+            <button onclick="switchTab('prep')" id="tab-prep" class="flex-1 px-4 py-4 text-sm hover:bg-slate-50 transition">준비 체크리스트</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto px-4 py-8 min-h-screen">
+
+        <!-- TAB 1: Overview -->
+        <div id="content-overview" class="slide-in">
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2 text-sm">Q</span>
+                        근전도 검사란?
+                    </h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        우리 몸의 <strong>전기 배선(신경)</strong>과 <strong>엔진(근육)</strong>이 제대로 작동하는지 확인하는 검사입니다. 신경전도 검사(NCS)와 근육 내 침 검사(EMG) 두 가지로 구성됩니다.
+                    </p>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-blue-800">💡 <strong>쉽게 비유하자면?</strong><br>집에 전기가 안 들어올 때, 전선이 끊어졌는지(신경 문제) 아니면 전구 자체가 고장 났는지(근육 문제) 확인하는 과정과 같습니다.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-2 text-sm">!</span>
+                        어떤 경우에 받나요?
+                    </h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>손발이 저리거나 감각이 둔할 때 (손목터널증후군 등)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>팔다리에 힘이 빠지거나 근육이 마를 때</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>목이나 허리 디스크로 인한 신경 눌림 의심 시</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>안면 마비가 발생했을 때</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Diagnostic Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-500">
+                <h3 class="text-lg font-bold mb-4">검사로 알 수 있는 것들</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="diagnosisChart"></canvas>
+                </div>
+                <p class="text-center text-sm text-slate-500 mt-2">* 위 데이터는 일반적인 검사 목적의 비율을 나타냅니다.</p>
+            </div>
+        </div>
+
+        <!-- TAB 2: Process (Simulation) -->
+        <div id="content-process" class="hidden">
+            <div class="bg-indigo-50 p-6 rounded-xl mb-8 text-center">
+                <h3 class="text-xl font-bold text-indigo-900 mb-2">검사 소요 시간</h3>
+                <div class="flex items-center justify-center space-x-4">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-indigo-600">30~60</div>
+                        <div class="text-xs text-indigo-400">분 (평균)</div>
+                    </div>
+                    <div class="h-10 w-px bg-indigo-200"></div>
+                    <p class="text-sm text-indigo-700 text-left">
+                        환자의 상태와 검사 범위에 따라<br>시간은 달라질 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="relative border-l-4 border-blue-200 ml-4 space-y-10">
+                <!-- Step 1 -->
+                <div class="relative pl-8 group cursor-pointer" onclick="toggleDetail('step1')">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow"></div>
+                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">1. 준비 및 환복</h4>
+                    <p class="text-slate-500 text-sm">검사 부위 노출이 쉬운 옷으로 갈아입습니다.</p>
+                    <div id="step1" class="hidden-content mt-2 bg-slate-50 p-4 rounded-lg text-sm">
+                        금속 장신구(시계, 팔찌, 반지)를 제거하고, 로션이나 크림을 바르지 않은 상태여야 전극이 잘 부착됩니다.
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative pl-8 group cursor-pointer" onclick="toggleDetail('step2')">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-indigo-500 rounded-full border-4 border-white shadow"></div>
+                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition">2. 신경전도 검사 (NCS)</h4>
+                    <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded mb-1">전기 자극 단계</span>
+                    <p class="text-slate-500 text-sm">피부에 패드를 붙이고 약한 전기를 흘려보냅니다.</p>
+                    <div id="step2" class="hidden-content mt-2 bg-slate-50 p-4 rounded-lg text-sm">
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li><strong>느낌:</strong> 찌릿찌릿한 느낌이 들며 근육이 움찔거립니다.</li>
+                            <li><strong>안전:</strong> 인체에 무해한 아주 미세한 전류입니다. 놀라지 마세요.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative pl-8 group cursor-pointer" onclick="toggleDetail('step3')">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-purple-500 rounded-full border-4 border-white shadow pulse-icon"></div>
+                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-purple-600 transition">3. 근전도 검사 (Needle EMG)</h4>
+                    <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded mb-1">가장 중요한 단계</span>
+                    <p class="text-slate-500 text-sm">아주 얇은 특수 침을 근육에 살짝 찌릅니다.</p>
+                    <div id="step3" class="hidden-content mt-2 bg-slate-50 p-4 rounded-lg text-sm">
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li><strong>방법:</strong> 전기 자극 없이, 침을 꽂은 상태에서 힘을 뺐다 줬다를 반복합니다.</li>
+                            <li><strong>소리:</strong> "투두두두" 하는 빗소리 같은 소리가 들리는데, 이는 근육의 전기 신호 소리입니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative pl-8 group cursor-pointer" onclick="toggleDetail('step4')">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow"></div>
+                    <h4 class="text-lg font-bold text-slate-800 group-hover:text-green-600 transition">4. 검사 종료 및 귀가</h4>
+                    <p class="text-slate-500 text-sm">지혈 후 바로 일상생활이 가능합니다.</p>
+                    <div id="step4" class="hidden-content mt-2 bg-slate-50 p-4 rounded-lg text-sm">
+                        침을 찌른 부위에 멍이 들거나 약간 뻐근할 수 있으나, 며칠 내로 자연스럽게 사라집니다. 온찜질이 도움이 됩니다.
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-xs text-slate-400 mt-6">각 단계를 클릭하여 자세한 내용을 확인하세요.</p>
+        </div>
+
+        <!-- TAB 3: Pain & FAQ -->
+        <div id="content-pain" class="hidden">
+            
+            <!-- Pain Simulator Visualization -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
+                <h3 class="text-xl font-bold mb-6 text-center">"얼마나 아픈가요?"</h3>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between text-xs text-slate-500 mb-2">
+                        <span>전혀 안 아픔</span>
+                        <span>조금 따끔</span>
+                        <span>뻐근함</span>
+                        <span>많이 아픔</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-4 rounded-full relative overflow-hidden">
+                        <!-- Bars -->
+                        <div class="absolute top-0 left-0 h-full bg-green-400 w-[10%]" title="모기 물림"></div>
+                        <div class="absolute top-0 left-[10%] h-full bg-blue-400 w-[20%]" title="신경전도 검사"></div>
+                        <div class="absolute top-0 left-[30%] h-full bg-orange-400 w-[25%]" title="근전도(침) 검사"></div>
+                        <div class="absolute top-0 left-[55%] h-full bg-red-400 w-[30%]" title="일반 주사/채혈"></div>
+                    </div>
+                    
+                    <!-- Labels linked to bars -->
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                        <div class="flex items-center"><div class="w-3 h-3 bg-blue-400 mr-2 rounded"></div>신경전도: 고무줄로 튕기는 느낌</div>
+                        <div class="flex items-center"><div class="w-3 h-3 bg-orange-400 mr-2 rounded"></div>침 근전도: 한의원 침보다 약간 뻐근</div>
+                        <div class="flex items-center"><div class="w-3 h-3 bg-red-400 mr-2 rounded"></div>비교: 독감 주사보다 덜 아픕니다</div>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400">
+                    <p class="text-orange-800 text-sm">
+                        <strong>Tip:</strong> 긴장해서 몸에 힘을 주면 더 아플 수 있습니다. <br>
+                        심호흡을 하고 몸을 축 늘어뜨리면(이완하면) 통증이 훨씬 줄어듭니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <h3 class="text-lg font-bold mb-4">자주 묻는 질문 (FAQ)</h3>
+            <div class="space-y-3">
+                <div class="border rounded-lg overflow-hidden">
+                    <button class="w-full px-4 py-3 text-left font-medium bg-white hover:bg-slate-50 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span>Q. 검사 후 운전해도 되나요?</span>
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="hidden-content bg-slate-50 px-4 text-sm text-slate-600">
+                        <div class="py-3">네, 가능합니다. 근전도 검사는 마취를 하지 않으므로 의식이나 운동 능력에 영향을 주지 않아 바로 운전 및 일상생활이 가능합니다.</div>
+                    </div>
+                </div>
+
+                <div class="border rounded-lg overflow-hidden">
+                    <button class="w-full px-4 py-3 text-left font-medium bg-white hover:bg-slate-50 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span>Q. 식사는 하고 가도 되나요?</span>
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="hidden-content bg-slate-50 px-4 text-sm text-slate-600">
+                        <div class="py-3">네, 식사와는 무관한 검사입니다. 평소대로 식사하시고 오시면 됩니다.</div>
+                    </div>
+                </div>
+
+                <div class="border rounded-lg overflow-hidden">
+                    <button class="w-full px-4 py-3 text-left font-medium bg-white hover:bg-slate-50 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span>Q. 복용 중인 약은 어떻게 하나요?</span>
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="hidden-content bg-slate-50 px-4 text-sm text-slate-600">
+                        <div class="py-3">대부분의 약은 드셔도 됩니다. 단, <strong>항응고제(와파린, 아스피린 등)</strong>를 드시는 경우 검사 중 지혈이 잘 안 될 수 있으므로, 반드시 검사 전 의료진에게 말씀해 주셔야 합니다.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Checklist -->
+        <div id="content-prep" class="hidden">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold mb-2 text-center">검사 전 체크리스트</h3>
+                <p class="text-center text-sm text-slate-500 mb-6">병원 방문 전 하나씩 체크해보세요.</p>
+
+                <div class="space-y-4 max-w-md mx-auto">
+                    <!-- Item 1 -->
+                    <div class="flex items-center p-3 border rounded-lg hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-3 flex items-center justify-center check-circle bg-white">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-slate-800">로션/크림 바르지 않기</div>
+                            <div class="text-xs text-slate-500">피부 유분기는 전극 부착을 방해합니다.</div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="flex items-center p-3 border rounded-lg hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-3 flex items-center justify-center check-circle bg-white">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-slate-800">편안한 옷 입기</div>
+                            <div class="text-xs text-slate-500">소매나 바지를 걷어올리기 쉬운 헐렁한 옷 추천.</div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="flex items-center p-3 border rounded-lg hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-3 flex items-center justify-center check-circle bg-white">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-slate-800">복용 약물 확인하기</div>
+                            <div class="text-xs text-slate-500">항응고제 복용 시 담당 의사와 사전 상의 필수.</div>
+                        </div>
+                    </div>
+                     <!-- Item 4 -->
+                     <div class="flex items-center p-3 border rounded-lg hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-3 flex items-center justify-center check-circle bg-white">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-slate-800">몸을 깨끗이 씻고 오기</div>
+                            <div class="text-xs text-slate-500">청결한 피부 상태가 감염을 예방합니다.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <p id="ready-message" class="text-slate-400 text-sm font-medium">모든 항목을 체크하여 준비를 완료해주세요.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-8 mt-12 text-center text-sm">
+        <p class="mb-2">본 가이드는 환자의 이해를 돕기 위해 제작된 참고용 자료입니다.</p>
+        <p>정확한 진단 및 검사 절차는 담당 전문의와 상담하시기 바랍니다.</p>
+        <button onclick="window.print()" class="mt-4 border border-slate-500 px-4 py-2 rounded hover:bg-slate-700 transition">
+            🖨 이 페이지 인쇄하기 / PDF 저장
+        </button>
+    </footer>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all contents
+            ['overview', 'process', 'pain', 'prep'].forEach(id => {
+                document.getElementById('content-' + id).classList.add('hidden');
+                document.getElementById('content-' + id).classList.remove('slide-in');
+                document.getElementById('tab-' + id).classList.remove('tab-active', 'text-blue-600');
+                document.getElementById('tab-' + id).classList.add('text-slate-500');
+            });
+
+            // Show selected content
+            const selectedContent = document.getElementById('content-' + tabName);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('slide-in');
+
+            // Activate Tab Style
+            const selectedTab = document.getElementById('tab-' + tabName);
+            selectedTab.classList.add('tab-active', 'text-blue-600');
+            selectedTab.classList.remove('text-slate-500');
+            
+            // Re-render chart if switching to overview
+            if(tabName === 'overview') {
+                renderChart();
+            }
+        }
+
+        // Accordion Logic (Process Timeline)
+        function toggleDetail(id) {
+            const el = document.getElementById(id);
+            if (el.style.maxHeight) {
+                el.style.maxHeight = null;
+            } else {
+                el.style.maxHeight = el.scrollHeight + "px";
+            }
+        }
+
+        // Accordion Logic (FAQ)
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('span:last-child');
+            
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.innerText = "+";
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.innerText = "-";
+            }
+        }
+
+        // Checklist Logic
+        function toggleCheck(el) {
+            const circle = el.querySelector('.check-circle');
+            const isChecked = circle.classList.contains('checked');
+            
+            if (isChecked) {
+                circle.classList.remove('checked', 'bg-green-500', 'border-green-500');
+                circle.classList.add('bg-white');
+            } else {
+                circle.classList.add('checked', 'bg-green-500', 'border-green-500');
+                circle.classList.remove('bg-white');
+            }
+
+            // Check if all are checked
+            const allChecks = document.querySelectorAll('.check-circle');
+            const allChecked = Array.from(allChecks).every(c => c.classList.contains('checked'));
+            const msg = document.getElementById('ready-message');
+            
+            if (allChecked) {
+                msg.innerHTML = "🎉 <span class='text-green-600 font-bold'>준비 완료! 편안한 마음으로 병원에서 뵙겠습니다.</span>";
+            } else {
+                msg.innerText = "모든 항목을 체크하여 준비를 완료해주세요.";
+            }
+        }
+
+        // Chart.js rendering
+        let myChart = null;
+        function renderChart() {
+            const ctx = document.getElementById('diagnosisChart').getContext('2d');
+            
+            if(myChart) return; // Prevent re-rendering
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['손목터널증후군', '디스크(신경뿌리병증)', '말초신경병증', '근육질환', '기타'],
+                    datasets: [{
+                        label: '진단 비율',
+                        data: [35, 30, 20, 10, 5],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)', // Blue
+                            'rgba(99, 102, 241, 0.8)', // Indigo
+                            'rgba(139, 92, 246, 0.8)', // Purple
+                            'rgba(16, 185, 129, 0.8)', // Green
+                            'rgba(203, 213, 225, 0.8)' // Slate
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+
+        // Initial render logic
+        window.addEventListener('DOMContentLoaded', () => {
+            renderChart();
+            // Optional: Auto-expand first timeline item for demo
+            setTimeout(() => toggleDetail('step1'), 1000);
+        });
+
+    </script>
+</body>
+</html>
