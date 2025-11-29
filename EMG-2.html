@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMG Experience: 근전도 검사 프리미엄 가이드</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Custom Fonts & Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: #0f172a; 
+            color: #fff;
+            overflow-x: hidden;
+            margin: 0;
+        }
+        .font-eng { font-family: 'Montserrat', sans-serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-card:hover {
+            background: rgba(51, 65, 85, 0.6);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-5px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.6); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #2dd4bf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+    <!-- 3D Background Container -->
+    <div id="canvas-container"></div>
+    
+    <!-- React App Root -->
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Inline Icon Components (Replacing External Library) ---
+        const Activity = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>;
+        const Shield = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
+        const Clock = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+        const Zap = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
+        const CheckCircle = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
+        const Play = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+        const Info = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const ChevronRight = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+        const Brain = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>;
+        const HeartPulse = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 11l6.92 6"/></svg>;
+
+
+        // --- 3D Background Component (Pure Three.js logic wrapped in React) ---
+        const Background3D = () => {
+            useEffect(() => {
+                const container = document.getElementById('canvas-container');
+                if (!container) return;
+
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                // Particles (Representing Nerve Signals)
+                const geometry = new THREE.BufferGeometry();
+                const particlesCount = 700;
+                const posArray = new Float32Array(particlesCount * 3);
+
+                for(let i = 0; i < particlesCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 15; // Spread
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const material = new THREE.PointsMaterial({
+                    size: 0.025,
+                    color: 0x3b82f6, // Blue-500
+                    transparent: true,
+                    opacity: 0.8,
+                });
+
+                const particlesMesh = new THREE.Points(geometry, material);
+                scene.add(particlesMesh);
+
+                // Lines connecting particles (Neural Network)
+                const lineMaterial = new THREE.LineBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.1 });
+                const linesGeometry = new THREE.BufferGeometry();
+                const linesMesh = new THREE.LineSegments(linesGeometry, lineMaterial);
+                scene.add(linesMesh);
+
+                camera.position.z = 3;
+
+                // Mouse interaction
+                let mouseX = 0;
+                let mouseY = 0;
+                let frameId;
+                
+                const animate = () => {
+                    frameId = requestAnimationFrame(animate);
+                    particlesMesh.rotation.y += 0.001;
+                    particlesMesh.rotation.x += 0.0005;
+
+                    // Subtle movement based on mouse
+                    camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+                    camera.position.y += (mouseY * 0.5 - camera.position.y) * 0.05;
+
+                    renderer.render(scene, camera);
+                };
+
+                animate();
+
+                const handleResize = () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                };
+
+                const handleMouseMove = (event) => {
+                    mouseX = event.clientX / window.innerWidth - 0.5;
+                    mouseY = event.clientY / window.innerHeight - 0.5;
+                };
+
+                window.addEventListener('resize', handleResize);
+                window.addEventListener('mousemove', handleMouseMove);
+
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    cancelAnimationFrame(frameId);
+                    if (container && renderer.domElement) {
+                        container.removeChild(renderer.domElement);
+                    }
+                    // Cleanup Three.js resources
+                    geometry.dispose();
+                    material.dispose();
+                    lineMaterial.dispose();
+                    linesGeometry.dispose();
+                    renderer.dispose();
+                };
+            }, []);
+
+            return null; // This component renders to the fixed div
+        };
+
+        // --- Interactive Components ---
+
+        const NavButton = ({ active, label, icon: Icon, onClick }) => (
+            <button 
+                onClick={onClick}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-full transition-all duration-300 backdrop-blur-md border ${
+                    active 
+                    ? 'bg-blue-600/20 border-blue-500 text-blue-300 shadow-[0_0_20px_rgba(59,130,246,0.3)]' 
+                    : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+            >
+                <Icon size={18} />
+                <span className="font-medium text-sm">{label}</span>
+            </button>
+        );
+
+        const ProcessSimulation = () => {
+            const [step, setStep] = useState(0);
+            const [stimulating, setStimulating] = useState(false);
+            const canvasRef = useRef(null);
+
+            // Audio Visualizer Simulation
+            useEffect(() => {
+                if (step === 2 && canvasRef.current) {
+                    const ctx = canvasRef.current.getContext('2d');
+                    let animationId;
+                    
+                    const drawWave = () => {
+                        ctx.clearRect(0, 0, 300, 100);
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#3b82f6';
+                        ctx.lineWidth = 2;
+                        
+                        const time = Date.now() * 0.005;
+                        for (let x = 0; x < 300; x++) {
+                            // Combine sine waves to mimic EMG noise
+                            const y = 50 + 
+                                Math.sin(x * 0.05 + time * 2) * 10 * Math.random() + 
+                                Math.sin(x * 0.1 - time) * 5; 
+                            if (x === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                        animationId = requestAnimationFrame(drawWave);
+                    };
+                    drawWave();
+                    return () => cancelAnimationFrame(animationId);
+                }
+            }, [step]);
+
+            const triggerStimulation = () => {
+                setStimulating(true);
+                setTimeout(() => setStimulating(false), 1500); // 1.5s simulation
+            };
+
+            const steps = [
+                {
+                    title: "01. 센서 부착 (NCS)",
+                    desc: "피부 표면에 부드러운 패드를 부착합니다.",
+                    visual: (
+                        <div className="relative w-64 h-64 mx-auto flex items-center justify-center">
+                            {/* Arm placeholder */}
+                            <div className="w-48 h-12 bg-slate-700 rounded-full opacity-50 absolute"></div> 
+                            <div className="absolute top-1/2 left-10 w-8 h-8 rounded-full bg-blue-500/50 border-2 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-pulse"></div>
+                            <div className="absolute top-1/2 right-10 w-8 h-8 rounded-full bg-green-500/50 border-2 border-green-400 shadow-[0_0_15px_rgba(34,197,94,0.5)]"></div>
+                        </div>
+                    )
+                },
+                {
+                    title: "02. 전기 신호 전달",
+                    desc: "아주 미세한 전기 신호를 보내 신경 반응 속도를 측정합니다.",
+                    visual: (
+                        <div className="relative w-64 h-64 mx-auto flex items-center justify-center flex-col">
+                            <div className="relative w-full h-2 bg-slate-700 rounded-full overflow-hidden mb-6">
+                                <div className={`h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-1000 ease-out ${stimulating ? 'w-full' : 'w-0'}`}></div>
+                            </div>
+                            <button 
+                                onClick={triggerStimulation}
+                                disabled={stimulating}
+                                className={`px-6 py-2 rounded-full font-bold transition-all ${stimulating ? 'bg-slate-600 text-slate-400' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/50'}`}
+                            >
+                                {stimulating ? '신호 분석 중...' : '⚡ 자극 보내기 (Click)'}
+                            </button>
+                            <div className="mt-4 text-xs text-slate-400">
+                                {stimulating ? "데이터 수집 중: 54m/s 속도 감지됨" : "버튼을 눌러보세요"}
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    title: "03. 근육 반응 확인 (EMG)",
+                    desc: "특수 센서가 근육의 미세한 전기적 파형을 소리와 그래프로 변환합니다.",
+                    visual: (
+                        <div className="flex flex-col items-center">
+                            <div className="glass-panel p-2 rounded-lg mb-4 border-blue-500/30">
+                                <canvas ref={canvasRef} width="300" height="100" className="w-full h-24"></canvas>
+                            </div>
+                            <div className="flex items-center space-x-2 text-cyan-400 text-sm">
+                                <Activity size={16} className="animate-bounce" />
+                                <span>Real-time Bio-Signal</span>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-2 text-center max-w-xs">
+                                빗소리 같은 소음("투두두")이 들리는 것은 정상입니다.<br/>근육이 건강하게 반응하고 있다는 신호입니다.
+                            </p>
+                        </div>
+                    )
+                }
+            ];
+
+            return (
+                <div className="grid md:grid-cols-2 gap-8 items-center h-full">
+                    <div className="space-y-6">
+                        <div className="flex space-x-2 mb-4">
+                            {steps.map((_, i) => (
+                                <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-500 ${i <= step ? 'bg-blue-500' : 'bg-slate-700'}`}></div>
+                            ))}
+                        </div>
+                        <h3 className="text-3xl font-bold text-white mb-2">{steps[step].title}</h3>
+                        <p className="text-slate-300 leading-relaxed text-lg">{steps[step].desc}</p>
+                        
+                        <div className="flex space-x-4 pt-4">
+                            <button 
+                                onClick={() => setStep(Math.max(0, step - 1))}
+                                disabled={step === 0}
+                                className="px-4 py-2 rounded-lg border border-slate-600 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                            >
+                                이전 단계
+                            </button>
+                            <button 
+                                onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
+                                disabled={step === steps.length - 1}
+                                className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-30 disabled:bg-slate-700 transition flex items-center shadow-lg shadow-blue-900/50"
+                            >
+                                다음 단계 <ChevronRight size={16} className="ml-1" />
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div className="glass-panel p-8 rounded-2xl flex items-center justify-center min-h-[300px] border border-slate-600/50 bg-gradient-to-br from-slate-800/50 to-slate-900/50 relative overflow-hidden">
+                        {/* Background Decor */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full"></div>
+                        
+                        <div className="relative z-10 w-full">
+                            {steps[step].visual}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Main App Component ---
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('intro');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'intro':
+                        return (
+                            <div className="animate-fade-in space-y-8 py-10">
+                                <div className="text-center space-y-4">
+                                    <span className="inline-block px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-wider border border-blue-500/20 mb-2">MEDICAL INTELLIGENCE</span>
+                                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-4">
+                                        근전도 검사<span className="text-blue-500">.</span>
+                                        <br/><span className="text-3xl md:text-5xl font-light text-slate-400 font-eng">Precision & Safety</span>
+                                    </h1>
+                                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                                        당신의 신경과 근육 상태를 가장 과학적으로 분석하는 
+                                        <span className="text-blue-400 font-semibold"> 표준 진단 기술</span>입니다.
+                                        <br/>막연한 두려움 대신, 정확한 과정과 원리를 먼저 경험해보세요.
+                                    </p>
+                                </div>
+                                
+                                <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-12">
+                                    <div className="glass-panel p-6 rounded-xl hover:bg-slate-800/50 transition duration-300 group cursor-default">
+                                        <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 transition">
+                                            <Brain size={24} />
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2">신경계 정밀 진단</h3>
+                                        <p className="text-slate-400 text-sm">MRI로도 보이지 않는 신경의 기능적 이상 유무를 전기 신호로 정확히 찾아냅니다.</p>
+                                    </div>
+                                    <div className="glass-panel p-6 rounded-xl hover:bg-slate-800/50 transition duration-300 group cursor-default">
+                                        <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 mb-4 group-hover:scale-110 transition">
+                                            <Shield size={24} />
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2">안전성 입증</h3>
+                                        <p className="text-slate-400 text-sm">인체에 무해한 미세 전류를 사용하며, 임산부나 노약자도 받을 수 있는 안전한 검사입니다.</p>
+                                    </div>
+                                    <div className="glass-panel p-6 rounded-xl hover:bg-slate-800/50 transition duration-300 group cursor-default">
+                                        <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition">
+                                            <Clock size={24} />
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2">30~60분 소요</h3>
+                                        <p className="text-slate-400 text-sm">복잡한 준비 과정 없이, 약 1시간 내외로 모든 정밀 검사가 완료됩니다.</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="text-center pt-8">
+                                    <button 
+                                        onClick={() => setActiveTab('simulation')}
+                                        className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white px-10 py-4 rounded-full font-bold text-lg shadow-[0_10px_40px_rgba(59,130,246,0.4)] hover:shadow-[0_10px_60px_rgba(59,130,246,0.6)] transition-all transform hover:-translate-y-1 flex items-center mx-auto"
+                                    >
+                                        검사 과정 체험하기 <Play size={20} className="ml-2 fill-current" />
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    
+                    case 'simulation':
+                        return (
+                            <div className="max-w-5xl mx-auto py-8 animate-fade-in">
+                                <div className="glass-panel rounded-2xl p-8 md:p-12 relative overflow-hidden">
+                                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
+                                     <ProcessSimulation />
+                                </div>
+                                <div className="mt-6 text-center text-slate-500 text-sm">
+                                    * 실제 검사는 전문의의 지도 하에 안전하게 진행됩니다.
+                                </div>
+                            </div>
+                        );
+
+                    case 'pain':
+                        return (
+                            <div className="max-w-4xl mx-auto py-10 animate-fade-in">
+                                <div className="text-center mb-10">
+                                    <h2 className="text-3xl font-bold mb-4">가장 걱정되는 '통증'에 대하여</h2>
+                                    <p className="text-slate-400">많은 환자분들이 걱정하시지만, 실제로는 예방접종보다 가볍게 지나갑니다.</p>
+                                </div>
+
+                                {/* Pain Slider */}
+                                <div className="glass-panel p-8 rounded-2xl mb-8 relative">
+                                    <h3 className="text-lg font-bold mb-8 text-center text-blue-300">통증 강도 비교 시뮬레이터</h3>
+                                    
+                                    <div className="relative pt-6 pb-2 px-4">
+                                        <div className="w-full h-4 bg-slate-700 rounded-full relative overflow-hidden">
+                                            <div className="absolute top-0 left-0 h-full w-[25%] bg-gradient-to-r from-green-500 to-blue-500 rounded-l-full"></div>
+                                            <div className="absolute top-0 left-[25%] h-full w-[15%] bg-blue-500"></div>
+                                            <div className="absolute top-0 left-[40%] h-full w-[60%] bg-slate-700"></div>
+                                            
+                                            {/* Labels */}
+                                            <div className="absolute -top-6 left-0 text-xs text-green-400">무통증</div>
+                                            <div className="absolute -top-6 left-[25%] text-xs text-blue-400 font-bold -translate-x-1/2">근전도 검사</div>
+                                            <div className="absolute -top-6 left-[60%] text-xs text-orange-400 -translate-x-1/2">독감 주사</div>
+                                            <div className="absolute -top-6 right-0 text-xs text-red-500">심한 통증</div>
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 text-center">
+                                                <div className="text-green-400 text-xl font-bold mb-1">모기 물림</div>
+                                                <div className="text-slate-500 text-xs">Level 1</div>
+                                            </div>
+                                            <div className="bg-blue-900/40 p-4 rounded-lg border border-blue-500/50 text-center ring-2 ring-blue-500/30">
+                                                <div className="text-blue-300 text-xl font-bold mb-1">근전도</div>
+                                                <div className="text-blue-200/70 text-xs">Level 2~3</div>
+                                            </div>
+                                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 text-center">
+                                                <div className="text-orange-400 text-xl font-bold mb-1">근육 주사</div>
+                                                <div className="text-slate-500 text-xs">Level 5</div>
+                                            </div>
+                                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 text-center">
+                                                <div className="text-red-400 text-xl font-bold mb-1">타박상</div>
+                                                <div className="text-slate-500 text-xs">Level 7+</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="glass-panel p-6 rounded-xl border-l-4 border-blue-500 bg-blue-900/10">
+                                    <h4 className="flex items-center text-lg font-bold text-blue-100 mb-2">
+                                        <Zap size={18} className="mr-2 text-yellow-400" />
+                                        덜 아프게 받는 Secret Tip
+                                    </h4>
+                                    <p className="text-slate-300 text-sm leading-relaxed">
+                                        검사 중 몸에 힘을 주면 근육이 수축되어 바늘이 들어갈 때 저항감이 생깁니다. 
+                                        <span className="text-white font-bold underline decoration-blue-500 decoration-2 underline-offset-2"> '한숨을 푹 쉬듯' 온몸의 힘을 빼면</span> 통증이 획기적으로 줄어듭니다.
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                        
+                    case 'checklist':
+                        return (
+                             <div className="max-w-3xl mx-auto py-10 animate-fade-in">
+                                <h2 className="text-3xl font-bold text-center mb-8">검사 전 셀프 체크리스트</h2>
+                                <div className="space-y-4">
+                                    {[
+                                        "로션이나 오일 바르지 않기 (전극 부착을 위해)",
+                                        "헐렁하고 걷어 올리기 편한 옷 입기",
+                                        "항응고제(혈전용해제) 복용 시 미리 알리기",
+                                        "페이스메이커(심박동기) 시술 여부 알리기"
+                                    ].map((item, idx) => (
+                                        <label key={idx} className="flex items-center glass-panel p-5 rounded-xl cursor-pointer hover:bg-slate-800 transition group">
+                                            <input type="checkbox" className="w-6 h-6 rounded border-slate-500 text-blue-600 focus:ring-blue-500 bg-slate-700 mr-4" />
+                                            <span className="text-lg text-slate-300 group-hover:text-white transition">{item}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                <div className="mt-8 text-center">
+                                    <p className="text-slate-400 text-sm">위 사항만 지켜주시면 가장 정확한 결과를 얻을 수 있습니다.</p>
+                                </div>
+                             </div>
+                        );
+                }
+            };
+
+            return (
+                <div className="min-h-screen pb-20 relative z-10">
+                    <nav className="sticky top-0 z-50 backdrop-blur-lg border-b border-slate-700/50 bg-slate-900/70">
+                        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <div className="flex items-center space-x-2">
+                                <Activity className="text-blue-500" />
+                                <span className="font-bold text-xl tracking-tight font-eng">EMG<span className="font-light text-slate-400">.Guide</span></span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="max-w-6xl mx-auto px-4 pt-8">
+                        {/* Navigation Tabs */}
+                        <div className="flex flex-wrap justify-center gap-4 mb-12">
+                            <NavButton active={activeTab === 'intro'} onClick={() => setActiveTab('intro')} label="검사 개요" icon={Info} />
+                            <NavButton active={activeTab === 'simulation'} onClick={() => setActiveTab('simulation')} label="과정 시뮬레이션" icon={Play} />
+                            <NavButton active={activeTab === 'pain'} onClick={() => setActiveTab('pain')} label="통증 및 궁금증" icon={HeartPulse} />
+                            <NavButton active={activeTab === 'checklist'} onClick={() => setActiveTab('checklist')} label="준비 체크리스트" icon={CheckCircle} />
+                        </div>
+
+                        {/* Content Area */}
+                        <div className="min-h-[500px] transition-all duration-500 ease-in-out">
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Background3D />); // Background render
+        root.render(
+            <React.StrictMode>
+                <App />
+            </React.StrictMode>
+        );
+    </script>
+</body>
+</html>
