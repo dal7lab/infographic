@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Trend Analysis: The Living Keywords Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --text-primary: #111;
+            --accent-blue: #2563eb;
+            --accent-red: #dc2626;
+        }
+        body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+        
+        /* --- BUBBLE CHART STYLES --- */
+        #bubble-container {
+            width: 100%;
+            height: 1200px; /* 3배 확장된 영역 */
+            position: relative;
+            overflow: visible;
+            cursor: crosshair;
+        }
+        .bubble-label {
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* --- CARD & RADAR STYLES --- */
+        .trend-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #eee;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .trend-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 40px -5px rgba(37, 99, 235, 0.15);
+            z-index: 10;
+        }
+        
+        /* 레이더 차트 가독성 강화 */
+        .radar-axis-label {
+            font-size: 11px;
+            font-weight: 900;
+            fill: #333;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
+        .radar-grid-line { stroke: #ddd; stroke-width: 1.5px; stroke-dasharray: 3 3; }
+        .radar-area {
+            fill: rgba(37, 99, 235, 0.1);
+            stroke: var(--accent-blue);
+            stroke-width: 3px;
+        }
+        
+        /* --- TOOLTIP --- */
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 100;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="py-24 px-6 text-center max-w-5xl mx-auto">
+        <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm">
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span class="text-xs font-bold text-gray-500 tracking-widest font-mono">LIVE DATA: GLOBAL SIGNALS</span>
+        </div>
+        <h1 class="text-7xl md:text-9xl font-black tracking-tighter mb-8 text-gray-900 leading-[0.9]">
+            SURVIVAL<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"> SIGNAL 2025</span>
+        </h1>
+        <p class="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
+            소란스러운 유행이 아닌, 방대한 데이터가 가리키는 시대의 맥락.<br>
+            가장 솔직한 욕망과 결핍이 그려낸 2025년의 정밀한 지도.<br>
+            데이터의 행간을 읽어낸 불확실한 내일의 단단한 좌표가 여기 있다.
+        </p>
+    </header>
+
+    <main class="max-w-[1800px] mx-auto px-4">
+        
+        <div class="mb-24 relative">
+    <!-- 02번 스타일을 그대로 적용한 새로운 01번 제목 -->
+            <h2 class="text-4xl font-black mb-6 flex items-end gap-4 border-b-4 border-black pb-4 inline-block">
+                <span class="text-blue-600">01.</span> Keyword Universe
+        <!-- 기존의 설명(Size/Physics)을 제목 옆에 세련되게 배치 -->
+                <span class="text-sm font-normal text-gray-400 ml-4 font-mono hidden md:inline-block">
+                    Size: Search Volume &nbsp;|&nbsp; Physics: Force Simulation
+                </span>
+            </h2>
+    
+    <!-- 모바일용 설명 (화면이 작을 때만 보임) -->
+                <p class="md:hidden text-xs text-gray-500 mb-4 font-mono">
+                 Size: Search Volume / Physics: Force Simulation
+                </p>
+
+                <div id="bubble-container"></div>
+            <div id="tooltip"></div>
+        </div>
+
+        <div class="px-4 mb-32">
+            <h2 class="text-4xl font-black mb-6 flex items-center gap-4 border-b-4 border-black pb-4 inline-block">
+                <span class="text-red-600">02.</span> Deep Analysis
+                <span class="text-sm font-normal text-gray-400 ml-4 font-mono">Data holds the future.Data holds the way.</span>
+            </h2>
+
+            <div class="mb-12 bg-white border border-gray-200 rounded-lg p-4 flex flex-wrap gap-x-8 gap-y-3 text-xs font-medium text-gray-600 shadow-sm items-center justify-start">
+                <span class="font-bold text-gray-900 mr-2">[차트 분석 가이드]</span>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span><span class="font-bold text-blue-700 font-mono">GROWTH</span> : 검색량/관심도 급상승</div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-800"></span><span class="font-bold text-gray-800 font-mono">ISSUE</span> : 사회적 논란/화제성</div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span><span class="font-bold text-blue-700 font-mono">MONEY</span> : 상업적 가치/수익성</div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span><span class="font-bold text-blue-700 font-mono">NEW</span> : 기술/개념의 혁신성</div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-800"></span><span class="font-bold text-gray-800 font-mono">NEED</span> : 대중의 필수/결핍 요소</div>
+            </div>
+
+            <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </div>
+
+        <div class="px-4 mb-32">
+            <h2 class="text-2xl font-bold mb-8 text-gray-400">03. The Long Tail (Rank 31-100)</h2>
+            <div id="tail-grid" class="flex flex-wrap gap-2 justify-center"></div>
+        </div>
+    </main>
+
+    <script>
+    // Full 100 Data Points
+    // Radar Order: [Growth, Controversy, Commercial, Innovation, Necessity]
+    const fullData = [
+        // TOP 30 (Detailed)
+        { rank: 1, ko: "유튜브", en: "YouTube", cat: "Platform", radar: [95, 40, 100, 80, 100], desc: "검색의 종말. 텍스트를 거부하고 영상으로 세상을 배우는 인류의 '디지털 탯줄'." },
+        { rank: 2, ko: "레이지 베이트", en: "Rage Bait", cat: "Social", radar: [100, 95, 90, 20, 10], desc: "분노는 돈이 된다. 알고리즘의 간택을 위해 고의로 조장된 혐오 콘텐츠." },
+        { rank: 3, ko: "챗GPT", en: "ChatGPT", cat: "AI", radar: [90, 60, 95, 95, 90], desc: "현대의 델포이 신전. 질문하지 않으면 도태되는 시대의 상징." },
+        { rank: 4, ko: "도파민 디톡스", en: "Dopamine Detox", cat: "Health", radar: [85, 10, 70, 30, 80], desc: "디지털 마약 탈출. '심심함'을 돈 주고 사는 역설적인 시대." },
+        { rank: 5, ko: "슬롭", en: "Slop", cat: "Tech", radar: [90, 80, 40, 60, 5], desc: "AI가 뱉어낸 디지털 오물. 의미 없는 정보의 쓰나미." },
+        { rank: 6, ko: "제미나이", en: "Gemini", cat: "AI", radar: [88, 50, 90, 90, 85], desc: "구글의 반격. 안드로이드와 결합된 생활 밀착형 AI 비서." },
+        { rank: 7, ko: "오라 파밍", en: "Aura Farming", cat: "Culture", radar: [95, 20, 60, 80, 40], desc: "인생은 RPG. '멋짐(Aura)'을 경험치처럼 쌓으려는 Z세대의 놀이." },
+        { rank: 8, ko: "딥시크", en: "DeepSeek", cat: "AI", radar: [92, 70, 85, 90, 60], desc: "중국발 AI의 습격. 저비용 고효율로 패권을 위협하는 블랙 스완." },
+        { rank: 9, ko: "기후 비등", en: "Climate Boiling", cat: "Eco", radar: [80, 30, 60, 10, 100], desc: "온난화는 끝났다. 끓는 지구의 시대, 생존을 위한 검색." },
+        { rank: 10, ko: "브레인 롯", en: "Brain Rot", cat: "Social", radar: [90, 50, 20, 10, 70], desc: "뇌가 썩는 기분. 숏폼 중독이 가져온 인지 능력의 붕괴." },
+        { rank: 11, ko: "바이브 코딩", en: "Vibe Coding", cat: "Tech", radar: [85, 40, 70, 90, 60], desc: "문법 대신 느낌으로. 자연어로 코딩하는 새로운 패러다임." },
+        { rank: 12, ko: "콰이어트 럭셔리", en: "Quiet Luxury", cat: "Fashion", radar: [60, 10, 90, 20, 30], desc: "로고 없는 과시. 은밀해서 더 강력한 부의 증명." },
+        { rank: 13, ko: "오젬픽", en: "Ozempic", cat: "Health", radar: [95, 80, 100, 70, 50], desc: "욕망의 주사. 비만을 정복한 약물의 명과 암." },
+        { rank: 14, ko: "로우 도깅", en: "Raw-dogging", cat: "Trend", radar: [80, 30, 10, 40, 10], desc: "기내 엔터테인먼트 거부. 극한의 지루함 챌린지." },
+        { rank: 15, ko: "시추에이션십", en: "Situationship", cat: "Love", radar: [70, 40, 30, 10, 60], desc: "정의하지 않는 관계. 썸과 연애 사이의 안전한 모호함." },
+        { rank: 16, ko: "에이전트 AI", en: "Agentic AI", cat: "Tech", radar: [90, 50, 90, 100, 80], desc: "스스로 행동하는 AI. 비서를 넘어 대리인으로." },
+        { rank: 17, ko: "N잡러", en: "N-jobber", cat: "Job", radar: [75, 20, 80, 50, 90], desc: "평생직장의 종말. 다중 자아 생존 전략." },
+        { rank: 18, ko: "딥페이크", en: "Deepfake", cat: "Security", radar: [80, 95, 40, 90, 70], desc: "보이는 것을 믿을 수 없다. 진실의 위기." },
+        { rank: 19, ko: "메뉴 앵자이어티", en: "Menu Anxiety", cat: "Psych", radar: [65, 10, 20, 10, 40], desc: "선택 과잉이 부른 주문 공포증." },
+        { rank: 20, ko: "파이어족", en: "F.I.R.E", cat: "Econ", radar: [70, 30, 80, 40, 60], desc: "조기 은퇴를 향한 노동 탈출의 욕망." },
+        { rank: 21, ko: "뉴로 라이트", en: "Neuro-rights", cat: "Tech", radar: [50, 70, 40, 90, 80], desc: "뇌 데이터 프라이버시." },
+        { rank: 22, ko: "리즈", en: "Rizz", cat: "Slang", radar: [85, 10, 50, 30, 40], desc: "상대를 홀리는 카리스마." },
+        { rank: 23, ko: "소버린 AI", en: "Sovereign AI", cat: "Tech", radar: [60, 50, 70, 60, 70], desc: "국가별 AI 주권 확보 경쟁." },
+        { rank: 24, ko: "테일러 스위프트", en: "Taylor Swift", cat: "Culture", radar: [60, 20, 100, 30, 20], desc: "걸어 다니는 대기업." },
+        { rank: 25, ko: "바이오해킹", en: "Biohacking", cat: "Health", radar: [75, 40, 80, 80, 50], desc: "신체 기능의 기술적 최적화." },
+        { rank: 26, ko: "습구 온도", en: "Wet-bulb Temp", cat: "Eco", radar: [80, 10, 20, 10, 100], desc: "생존 한계 기온의 공포." },
+        { rank: 27, ko: "쇼츠", en: "Shorts", cat: "Media", radar: [90, 60, 95, 70, 80], desc: "1분 미만의 디지털 마약." },
+        { rank: 28, ko: "스테그플레이션", en: "Stagflation", cat: "Econ", radar: [60, 10, 90, 0, 90], desc: "물가는 오르고 성장은 멈췄다." },
+        { rank: 29, ko: "젠더 갈등", en: "Gender War", cat: "Social", radar: [80, 90, 30, 10, 60], desc: "사회 분열의 핵심 축." },
+        { rank: 30, ko: "비트코인", en: "Bitcoin", cat: "Econ", radar: [70, 60, 90, 80, 70], desc: "제도권에 안착한 디지털 금." },
+        
+        // TAIL DATA (31-100) - Full Descriptions Added
+        { rank: 31, ko: "프롬프트 엔지니어", en: "Prompt Engineer", cat: "Job", desc: "AI를 조련하는 언어의 마법사. 코딩보다 강력한 질문의 힘." }, 
+        { rank: 32, ko: "에코 미니멀리즘", en: "Eco Minimalism", cat: "Eco", desc: "소비가 곧 죄악. 생존을 위해 물건을 버리는 극단적 다이어트." },
+        { rank: 33, ko: "디인플루언싱", en: "De-influencing", cat: "Trend", desc: "거짓된 소비 선동에 대한 반격. '사지 마라'고 외치는 것이 돈이 되는 역설." }, 
+        { rank: 34, ko: "탄소 여권", en: "Carbon Passport", cat: "Eco", desc: "이동의 자유가 제한된다. 탄소 배출량이 곧 화폐이자 통제 수단이 될 미래." },
+        { rank: 35, ko: "갓생", en: "God-saeng", cat: "Life", desc: "불안을 잠재우기 위한 강박적 성실함. 루틴만이 예측 불가능한 세상을 버티는 무기." }, 
+        { rank: 36, ko: "양자 컴퓨터", en: "Quantum Computer", cat: "Tech", desc: "모든 암호 체계의 종말. 신의 계산기가 열어젖힐 판도라의 상자." },
+        { rank: 37, ko: "베이지 플래그", en: "Beige Flag", cat: "Love", desc: "도파민 중독자들의 공포. 너무 평범해서 지루한 것이 죄가 되는 연애 시장." }, 
+        { rank: 38, ko: "웰니스", en: "Wellness", cat: "Health", desc: "아프면 끝장이다. 무너진 의료 시스템 속에서 예방만이 유일한 생존 전략." },
+        { rank: 39, ko: "원격 근무", en: "Remote Work", cat: "Job", desc: "사무실의 해체. 전 세계 70억 인구가 경쟁자가 되는 무한 경쟁의 링." }, 
+        { rank: 40, ko: "메타버스", en: "Metaverse", cat: "Tech", desc: "현실 도피처인가, 새로운 기회의 땅인가. 아직 식지 않은 가상 세계를 향한 욕망." },
+        { rank: 41, ko: "NFT", en: "NFT", cat: "Tech", desc: "디지털 소유권의 마지막 발악. 혹은 웹 3.0 시대로 가는 유일한 티켓." }, 
+        { rank: 42, ko: "스마트팜", en: "Smart Farm", cat: "Tech", desc: "기후 붕괴 시대의 식량 안보. 흙 없는 농업만이 인류를 먹여 살린다." },
+        { rank: 43, ko: "간헐적 단식", en: "Intermittent Fasting", cat: "Health", desc: "풍요 속의 기아 체험. 내 몸을 통제하려는 현대인의 처절한 수행." }, 
+        { rank: 44, ko: "글루텐 프리", en: "Gluten Free", cat: "Food", desc: "음식에 대한 불신. 내 몸을 공격하는 먹거리로부터의 탈출 시도." },
+        { rank: 45, ko: "멘탈 케어", en: "Mental Care", cat: "Health", desc: "무너지는 마음을 부여잡다. 우울증은 개인의 문제가 아닌 사회적 재난." }, 
+        { rank: 46, ko: "슬립 테크", en: "Sleep Tech", cat: "Tech", desc: "잠조차 기술의 도움이 필요한 불면의 시대. 휴식을 돈으로 산다." },
+        { rank: 47, ko: "홈트", en: "Home Training", cat: "Life", desc: "헬스장이 닫혀도 근육은 멈추지 않는다. 방구석에서 키우는 생존 체력." }, 
+        { rank: 48, ko: "저출산", en: "Low Birth Rate", cat: "Social", desc: "국가 소멸의 카운트다운. 아이를 낳지 않는 것이 가장 합리적 선택이 된 비극." },
+        { rank: 49, ko: "고령화", en: "Aging Society", cat: "Social", desc: "노인이 노인을 돌본다. 활력을 잃은 사회의 피할 수 없는 회색빛 미래." }, 
+        { rank: 50, ko: "1인 가구", en: "Single Household", cat: "Life", desc: "자발적 고립이자 경제적 불가피성. 혼자여서 자유롭고, 혼자여서 위태롭다." },
+        { rank: 51, ko: "공정성", en: "Fairness", cat: "Social", desc: "기회가 없는 사회의 비명. 결과의 평등이 아닌 과정의 투명함에 목숨을 건다." }, 
+        { rank: 52, ko: "알파세대", en: "Gen Alpha", cat: "Social", desc: "태어날 때부터 스마트폰을 쥔 신인류. 아날로그를 경험해 본 적 없는 첫 세대." },
+        { rank: 53, ko: "소셜 믹스", en: "Social Mix", cat: "Social", desc: "섞일 수 없는 물과 기름. 계층 갈등을 물리적으로 봉합하려는 시도." }, 
+        { rank: 54, ko: "도시 재생", en: "Urban Regeneration", cat: "Social", desc: "죽어가는 도시에 인공호흡. 젠트리피케이션과 발전 사이의 줄타기." },
+        { rank: 55, ko: "지방 소멸", en: "Local Extinction", cat: "Social", desc: "불 꺼진 마을들. 서울 공화국 아래서 잊혀져 가는 국토의 절반." }, 
+        { rank: 56, ko: "K-팝", en: "K-Pop", cat: "Culture", desc: "가장 화려한 수출품. 완벽하게 기획된 아이돌 시스템이 점령한 세계." },
+        { rank: 57, ko: "오징어 게임 2", en: "Squid Game 2", cat: "Culture", desc: "자본주의의 잔혹 동화. 죽어야 사는 게임에 열광하는 전 세계의 현실." }, 
+        { rank: 58, ko: "먹방", en: "Mukbang", cat: "Culture", desc: "대리 만족의 극치. 남이 먹는 것을 보며 공허한 위장을 채우는 외로움." },
+        { rank: 59, ko: "팝업 스토어", en: "Pop-up Store", cat: "Trend", desc: "사라지기에 가치 있다. '지금 아니면 못 산다'는 불안을 파는 마케팅." }, 
+        { rank: 60, ko: "레트로", en: "Retro", cat: "Trend", desc: "미래가 암울하니 과거로 도피한다. 겪어보지 못한 옛 시절에 대한 향수." },
+        { rank: 61, ko: "Y2K 패션", en: "Y2K Fashion", cat: "Trend", desc: "세기말의 감성이 돌아왔다. 화려하고 불안했던 2000년대의 재해석." }, 
+        { rank: 62, ko: "퍼스널 컬러", en: "Personal Color", cat: "Beauty", desc: "나를 정의하고 싶은 욕구. 색깔조차 진단받아야 안심하는 세대." },
+        { rank: 63, ko: "MBTI", en: "MBTI", cat: "Social", desc: "현대판 사주팔자. 복잡한 인간관계를 16개의 틀로 단순화하려는 시도." }, 
+        { rank: 64, ko: "밈", en: "Meme", cat: "Culture", desc: "맥락 없는 유머의 전파. 1초 만에 이해하지 못하면 도태되는 초단기 소통." },
+        { rank: 65, ko: "금리", en: "Interest Rate", cat: "Econ", desc: "내 지갑을 조이는 보이지 않는 손. 월급 빼고 다 오르는 공포의 근원." }, 
+        { rank: 66, ko: "환율", en: "Exchange Rate", cat: "Econ", desc: "국경 없는 돈의 전쟁. 여행부터 직구까지 내 삶을 흔드는 숫자." },
+        { rank: 67, ko: "주식", en: "Stock Market", cat: "Econ", desc: "계층 이동의 마지막 사다리. 노동 가치를 불신하는 개미들의 전쟁터." }, 
+        { rank: 68, ko: "부동산", en: "Real Estate", cat: "Econ", desc: "영혼을 끌어모아 산 콘크리트. 삶의 터전이 아닌 욕망의 투기장." },
+        { rank: 69, ko: "청년 지원", en: "Youth Support", cat: "Policy", desc: "미래 세대를 위한 투자, 혹은 표를 얻기 위한 선심성 공약의 홍수." }, 
+        { rank: 70, ko: "알뜰폰", en: "MVNO", cat: "Tech", desc: "통신비 다이어트. 브랜드 계급장을 떼고 실리를 택한 현명한 반란." },
+        { rank: 71, ko: "리퍼비시", en: "Refurbished", cat: "Eco", desc: "새것 같은 중고. 불황형 소비와 친환경 트렌드가 만난 합리적 선택." }, 
+        { rank: 72, ko: "구독 경제", en: "Subscription Economy", cat: "Econ", desc: "소유하지 않고 경험한다. 매달 통장을 갉아먹는 고정 지출의 덫." },
+        { rank: 73, ko: "중고 거래", en: "Second-hand Trade", cat: "Eco", desc: "나의 쓰레기가 누군가의 보물. 신뢰를 기반으로 한 하이퍼 로컬 경제." }, 
+        { rank: 74, ko: "짠테크", en: "Penny Pinching", cat: "Econ", desc: "티끌 모아 티끌? 아니, 생존이다. 10원 하나에 목숨 거는 긴축의 삶." },
+        { rank: 75, ko: "우크라이나", en: "Ukraine", cat: "Global", desc: "끝나지 않는 포성. 평화가 얼마나 깨지기 쉬운 유리잔인지 증명하는 비극." }, 
+        { rank: 76, ko: "가자 지구", en: "Gaza Strip", cat: "Global", desc: "증오의 연쇄. 종교와 역사가 뒤엉킨, 해결되지 않는 인류의 화약고." },
+        { rank: 77, ko: "미 대선", en: "US Election", cat: "Global", desc: "세계의 운명을 가를 투표. 초강대국의 리더십 교체가 가져올 나비효과." }, 
+        { rank: 78, ko: "공급망", en: "Supply Chain", cat: "Econ", desc: "세계화의 붕괴. 요소수부터 반도체까지, 끊기면 멈추는 경제의 혈관." },
+        { rank: 79, ko: "난민", en: "Refugees", cat: "Global", desc: "집 잃은 자들의 행렬. 기후와 전쟁이 만들어낸 21세기의 유랑민." }, 
+        { rank: 80, ko: "지정학", en: "Geopolitics", cat: "Global", desc: "지도가 무기다. 자원과 영토를 둘러싼 국가들의 냉혹한 체스 게임." },
+        { rank: 81, ko: "나토", en: "NATO", cat: "Global", desc: "다시 뭉치는 서방. 신냉전 시대, 칼을 가는 군사 동맹의 부활." }, 
+        { rank: 82, ko: "브릭스", en: "BRICS", cat: "Global", desc: "달러 패권에 도전장. 비서구권 국가들이 만드는 새로운 경제 질서." },
+        { rank: 83, ko: "반도체", en: "Semiconductors", cat: "Tech", desc: "21세기의 석유. 산업의 쌀을 확보하기 위한 국가 총력전." }, 
+        { rank: 84, ko: "스페이스X", en: "SpaceX", cat: "Tech", desc: "지구를 떠날 준비. 화성 이주는 공상과학이 아닌 현실의 비즈니스." },
+        { rank: 85, ko: "구글", en: "Google", cat: "Search", desc: "정보의 독점자이자 관문. AI 시대, 검색 제왕의 왕좌가 흔들린다." }, 
+        { rank: 86, ko: "번역", en: "Translation", cat: "Util", desc: "바벨탑의 붕괴. 언어 장벽이 사라진 세상, 소통의 혁명인가 혼란인가." },
+        { rank: 87, ko: "로또", en: "Lottery", cat: "Life", desc: "일주일의 희망 고문. 노동으로 부자가 될 수 없다는 절망이 만든 긴 줄." }, 
+        { rank: 88, ko: "계산기", en: "Calculator", cat: "Util", desc: "숫자 앞의 무력감. 복잡한 세금과 금리 앞에서 두드리는 생존 도구." },
+        { rank: 89, ko: "길 찾기", en: "Navigation", cat: "Util", desc: "최적 경로 강박. 단 1분의 낭비도 용납하지 않는 효율성 중독 사회." }, 
+        { rank: 90, ko: "맛집", en: "Foodie Spots", cat: "Life", desc: "미각의 쾌락 탐닉. 실패 없는 한 끼를 위해 리뷰 데이터를 맹신한다." },
+        { rank: 91, ko: "넷플릭스", en: "Netflix", cat: "Media", desc: "콘텐츠 제국. 잠자는 시간을 빼고 우리의 눈과 귀를 지배하는 알고리즘." }, 
+        { rank: 92, ko: "손흥민", en: "Son Heung-min", cat: "Sports", desc: "우울한 시대의 영웅. 11명의 발끝에서 찾는 국가적 자부심과 대리 만족." },
+        { rank: 93, ko: "제로 슈거", en: "Zero Sugar", cat: "Food", desc: "단맛은 원하지만 살은 찌기 싫다. 기술로 속이는 미각의 딜레마." }, 
+        { rank: 94, ko: "펫 휴머니제이션", en: "Pet Humanization", cat: "Life", desc: "사람보다 낫다. 자식 대신 반려동물에게 쏟는 무한한 애정과 자본." },
+        { rank: 95, ko: "단백질", en: "Protein", cat: "Health", desc: "근손실 공포. 건강한 육체를 숭배하는 사회의 필수 영양소." }, 
+        { rank: 96, ko: "탈모", en: "Hair Loss", cat: "Health", desc: "젊음을 잃는 공포. 한 올의 머리카락을 지키기 위한 처절한 사투." },
+        { rank: 97, ko: "유산균", en: "Probiotics", cat: "Health", desc: "장 건강이 면역력. 보이지 않는 균에 의지해서라도 살고 싶은 욕망." }, 
+        { rank: 98, ko: "마라탕", en: "Malatang", cat: "Food", desc: "혀를 때리는 자극. 스트레스를 매운맛으로 마비시키는 10대의 소울 푸드." },
+        { rank: 99, ko: "탕후루", en: "Tanghulu", cat: "Food", desc: "설탕 코팅된 쾌락. 바삭한 식감 뒤에 숨겨진 당 중독의 달콤한 함정." }, 
+        { rank: 100, ko: "제로 웨이스트", en: "Zero Waste", cat: "Eco", desc: "죄책감 덜기. 쓰레기 더미 속에서 지구를 구하려는 개인들의 눈물겨운 노력." }
+    ];
+</script>
+    <script>
+        // ==========================================
+        // 1. ALIVE BUBBLE CHART ENGINE (D3 FORCE) - [Text Fit Patch]
+        // ==========================================
+        
+        const container = document.getElementById('bubble-container');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        const svg = d3.select("#bubble-container").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height])
+            .style("max-width", "100%")
+            .style("height", "auto");
+
+        const color = d3.scaleOrdinal()
+            .domain(["Platform", "Social", "AI", "Health", "Tech", "Culture", "Eco", "Econ"])
+            .range(["#2563eb", "#dc2626", "#7c3aed", "#16a34a", "#4b5563", "#d97706", "#059669", "#ea580c"]);
+
+        // [수정 1] 버블 크기 상향 조정 (텍스트 공간 확보)
+        // 기존 [90, 15] -> [105, 25]로 최소/최대 크기를 모두 키웠습니다.
+        const radiusScale = d3.scaleSqrt()
+            .domain([1, 100])
+            .range([105, 25]); 
+
+        const nodes = fullData.map(d => ({
+            ...d,
+            radius: radiusScale(d.rank),
+            x: width / 2 + (Math.random() - 0.5) * 50,
+            y: height / 2 + (Math.random() - 0.5) * 50
+        }));
+
+        const tooltip = d3.select("#tooltip");
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("charge", d3.forceManyBody().strength(5))
+            .force("collide", d3.forceCollide().radius(d => d.radius + 2).iterations(2))
+            .force("x", d3.forceX(width / 2).strength(0.04))
+            .force("y", d3.forceY(height / 2).strength(0.06));
+
+        const node = svg.append("g")
+            .selectAll("g")
+            .data(nodes)
+            .join("g")
+            .attr("class", "bubble-group")
+            .style("cursor", "pointer")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("circle")
+            .attr("r", d => d.radius)
+            .attr("fill", d => color(d.cat))
+            .attr("stroke", "white")
+            .attr("stroke-width", 3)
+            .style("opacity", 0.85)
+            .style("transition", "fill 0.3s")
+            .on("mouseover", function(event, d) {
+                d3.select(this)
+                    .transition()
+                    .duration(800)
+                    .ease(d3.easeElasticOut)
+                    .attr("r", d.radius * 1.15) // 커지는 비율 살짝 조정 (너무 커짐 방지)
+                    .style("opacity", 1)
+                    .attr("stroke", "#111");
+                
+                tooltip.style("opacity", 1)
+                    .html(`
+                        <div class="font-bold text-lg mb-1">${d.ko}</div>
+                        <div class="text-xs text-gray-300 font-mono mb-2">${d.en}</div>
+                        <div class="text-xs border-t border-gray-600 pt-2">${d.desc || d.cat}</div>
+                    `);
+            })
+            .on("mousemove", (event) => {
+                const [x, y] = d3.pointer(event, container.parentElement);
+                
+                tooltip.style("left", (x + 15) + "px")
+                       .style("top", (y + 25) + "px");
+            })
+            .on("mouseout", function(event, d) {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .ease(d3.easeElasticOut)
+                    .attr("r", d.radius)
+                    .style("opacity", 0.85)
+                    .attr("stroke", "white");
+                tooltip.style("opacity", 0);
+            });
+
+        // [수정 2] 텍스트 크기 자동 최적화 (글자 수 반영)
+        node.append("text")
+            .filter(d => d.rank <= 50)
+            .text(d => d.ko)
+            .attr("text-anchor", "middle")
+            .attr("dy", ".35em")
+            .style("fill", "white")
+            .style("pointer-events", "none")
+            .style("text-shadow", "0 2px 4px rgba(0,0,0,0.3)")
+            
+            .style("font-weight", d => {
+                if (d.rank <= 5) return "900";      
+                else if (d.rank <= 20) return "700"; 
+                else return "400";                   
+            })
+
+            // [핵심] 글자 길이에 따른 폰트 크기 패널티 적용
+            .style("font-size", d => {
+                // 1. 기본 비율 설정 (순위별)
+                let ratio = 0.32; // 하위권 기본
+                if (d.rank <= 5) ratio = 0.40;      // 상위권 (기존보다 약간 줄임)
+                else if (d.rank <= 20) ratio = 0.36; // 중상위권
+
+                // 2. 글자 수(Length)에 따른 감점 (글자가 길면 더 작게)
+                const len = d.ko.length;
+                if (len > 6) ratio *= 0.6;        // 7글자 이상: 40% 축소
+                else if (len > 4) ratio *= 0.8;   // 5~6글자: 20% 축소
+                else if (len > 3) ratio *= 0.9;   // 4글자: 10% 축소
+                // 3글자 이하는 원본 비율 유지
+
+                return (d.radius * ratio) + "px";
+            });
+
+        simulation.on("tick", () => {
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // ==========================================
+        // 2. CARD & RADAR CHART RENDERER
+        // ==========================================
+        
+        function getRadarPath(data, size) {
+            const count = data.length;
+            const angleStep = (Math.PI * 2) / count;
+            const radius = size / 2;
+            const points = data.map((val, i) => {
+                const r = (val / 100) * radius;
+                const angle = i * angleStep - Math.PI / 2;
+                const x = size / 2 + Math.cos(angle) * r;
+                const y = size / 2 + Math.sin(angle) * r;
+                return [x, y];
+            });
+            return points.map((p, i) => (i === 0 ? "M" : "L") + p.join(",")).join(" ") + "Z";
+        }
+
+        // [NEW] Helper to generate analysis text based on radar values
+        function getAnalysisText(radar) {
+            const labels = ["폭발적 성장", "사회적 이슈", "높은 수익성", "혁신적 기술", "강력한 수요"];
+            // 80점 이상인 항목만 필터링
+            const highlights = radar
+                .map((val, idx) => ({ val, label: labels[idx] }))
+                .filter(item => item.val >= 80)
+                .sort((a, b) => b.val - a.val) // 높은 순 정렬
+                .map(item => item.label);
+
+            if (highlights.length === 0) return "전반적으로 균형 잡힌 초기 단계 패턴입니다.";
+            
+            // 상위 3개만 표시
+            const keywordStr = highlights.slice(0, 3).join(", ");
+            return `<span class="font-bold text-blue-600">${keywordStr}</span> 특성이 뚜렷하게 나타나는 패턴입니다.`;
+        }
+
+        const gridContainer = document.getElementById('card-grid');
+        const tailContainer = document.getElementById('tail-grid');
+
+        // Render Top 30 (Cards)
+        fullData.slice(0, 30).forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'trend-card group relative overflow-hidden';
+            
+            // Radar Settings
+            const size = 160; // Bigger Radar
+            const path = getRadarPath(item.radar, size);
+            const bgPath = getRadarPath([100,100,100,100,100], size);
+            
+            // [NEW] Generate Pattern Text
+            const patternText = getAnalysisText(item.radar);
+            
+            card.innerHTML = `
+                <div class="absolute -right-4 -top-4 text-[6rem] font-black text-gray-100 group-hover:text-blue-50 transition-colors pointer-events-none select-none z-0">
+                    ${item.rank}
+                </div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold uppercase rounded tracking-wider">${item.cat}</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">${item.ko}</h3>
+                        <p class="text-sm font-mono text-gray-400">${item.en}</p>
+                    </div>
+                    
+                    <div class="flex gap-4 items-end mt-auto">
+                        <div class="flex-1 flex flex-col justify-between self-stretch">
+                            <p class="text-sm text-gray-600 font-medium leading-relaxed text-justify word-keep-all mb-4">
+                                ${item.desc}
+                            </p>
+                            
+                            <div class="bg-slate-50 border-l-4 border-blue-500 rounded-r p-3 text-xs text-slate-600 leading-snug">
+                                <span class="block font-bold text-blue-800 text-[10px] tracking-widest mb-1">DATA PATTERN</span>
+                                ${patternText}
+                            </div>
+                        </div>
+                        
+                        <div class="shrink-0 relative mr-8">
+                            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="overflow-visible">
+                                <path d="${bgPath}" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+                                <path d="${getRadarPath([50,50,50,50,50], size)}" fill="none" class="radar-grid-line" />
+                                
+                                <path d="${path}" class="radar-area" />
+                                
+                                <text x="${size/2}" y="-10" text-anchor="middle" class="radar-axis-label">GROWTH</text>
+                                <text x="${size+10}" y="${size*0.35}" text-anchor="start" class="radar-axis-label">ISSUE</text>
+                                <text x="${size*0.8}" y="${size+15}" text-anchor="middle" class="radar-axis-label">MONEY</text>
+                                <text x="${size*0.2}" y="${size+15}" text-anchor="middle" class="radar-axis-label">NEW</text>
+                                <text x="-10" y="${size*0.35}" text-anchor="end" class="radar-axis-label">NEED</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(card);
+        });
+
+        // Render Tail (Tags)
+        fullData.slice(30).forEach(item => {
+            const tag = document.createElement('div');
+            tag.className = 'px-3 py-2 bg-white border border-gray-200 rounded text-xs text-gray-600 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-default';
+            tag.innerHTML = `<span class="font-mono text-gray-300 mr-2">#${item.rank}</span><span class="font-bold">${item.ko}</span>`;
+            tailContainer.appendChild(tag);
+        });
+    </script>
+    <!-- [요청사항 반영] AI 생성 자료 경고 문구 -->
+   <footer class="bg-red-50 border-t border-red-200 mt-8 py-3 -mb-px pb-0 border-b-0 block w-full relative z-10">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-1 mb-1 px-2 py-0.5 bg-white text-red-600 rounded-full text-[10px] font-extrabold tracking-wider uppercase border border-red-200 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                AI Disclaimer
+            </div>
+            <p class="text-sm text-red-500 font-extrabold mb-0.5 break-keep leading-tight">
+                이 자료는 AI가 수집·생성한 것이며, 환각이 포함될 수 있습니다. 의사결정에 참고할 경우 반드시 교차 확인하시기 바랍니다.
+            </p>
+            <p class="text-[13px] text-red-500 font-black font-mono break-keep leading-tight">
+                This material was collected and generated by AI and may contain hallucinations. <br>
+                Always verify before using it for decision-making.
+            </p>
+        </div>
+    </footer>
+
+    <!-- 두 번째 Footer: mt-32를 제거하고 z-0 적용 -->
+    <footer class="bg-black text-white py-24 text-center mt-0 relative z-0">
+        <h2 class="text-3xl font-black mb-4">DATA StoryTeller Lab.</h2>
+        <p class="text-gray-500 font-mono text-xs tracking-widest">PDOC·Human-Led Framework | RADS·AI-Driven Intelligence<br>
+        Human-led in Planning, Direction, Orchestration, and Curation.<br>
+        AI-powered in Research, Analysis, Design, and Synthesis.<br>
+        Where every decision begins.<br>
+        @DATA Source:Gemini 3.0 Pro(GOOGLE)</p>
+    </footer>
+
+</body>
+</html>
